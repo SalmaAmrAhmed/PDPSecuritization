@@ -279,11 +279,13 @@ curveParamsEstimationList_after2014_gas <- curveParamsEstimation(filteredNeighLi
                                                                   "gas")
 
 
-newdataset_before2014_oil <- setNewFeatures(resList_before2014$neighborsInfoFrame, curveParamsEstimationList_before2014_oil, neighborsPool_before2014_oil)
-newdataset_before2014_gas <- setNewFeatures(resList_before2014$neighborsInfoFrame, curveParamsEstimationList_before2014_gas, neighborsPool_before2014_gas)
+newdataset_before2014_oil <- setNewFeaturesOil(resList_before2014$neighborsInfoFrame, curveParamsEstimationList_before2014_oil, neighborsPool_before2014_oil)
 
-newdataset_after2014_oil <- setNewFeatures(resList_after2014$neighborsInfoFrame, curveParamsEstimationList_after2014_oil, neighborsPool_after2014_oil)
-newdataset_after2014_gas <- setNewFeatures(resList_after2014$neighborsInfoFrame, curveParamsEstimationList_after2014_gas, neighborsPool_after2014_gas)
+newdataset_before2014_gas <- setNewFeaturesGas(resList_before2014$neighborsInfoFrame, curveParamsEstimationList_before2014_gas, neighborsPool_before2014_gas)
+
+newdataset_after2014_oil <- setNewFeaturesOil(resList_after2014$neighborsInfoFrame, curveParamsEstimationList_after2014_oil, neighborsPool_after2014_oil)
+
+newdataset_after2014_gas <- setNewFeaturesGas(resList_after2014$neighborsInfoFrame, curveParamsEstimationList_after2014_gas, neighborsPool_after2014_gas)
 
 
 

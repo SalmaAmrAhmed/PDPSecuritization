@@ -45,6 +45,8 @@ final_before2014_gas <- final_before2014_gas %>% dplyr::select(API,
                                                                my_qi,
                                                                my_di)
 
+
+final_before2014_gas[final_before2014_gas == Inf] <- NA
 final_before2014_gas <- final_before2014_gas[complete.cases(final_before2014_gas),]
 
 # set.seed(5)
@@ -87,7 +89,7 @@ final_before2014_gas_test$predicted_di <- predict(di_model, final_before2014_gas
 final_before2014_gas_test <- inner_join(final_before2014_gas_test, newdataset_before2014_gas[, c("API", "my_b")], by = "API")
 
 sheet_gas <- fillGasSheet_actualprod(neighborsPool_before2014_gas, final_before2014_gas_test)
-sheet_arps <- fillGasSheet_arpsprod(neighborsPool_before2014_gas, final_before2014_gas_test, sheet_gas)
+sheet_arps <- fillGasSheet_arpsprod(neighborsPool_before2014_gas, final_before2014_gas_test, sheet_gas, 6)
 sheet_ml <- fillGasSheet_mlprod(neighborsPool_before2014_gas, final_before2014_gas_test, sheet_arps)
 
 

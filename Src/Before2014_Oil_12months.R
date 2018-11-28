@@ -93,9 +93,9 @@ final_before2014_oil_test$predicted_di <- predict(di_model, final_before2014_oil
 final_before2014_oil_test <- inner_join(final_before2014_oil_test, newdataset_before2014_oil[, c("API", "my_b")], by = "API")
 
 sheet_oil <- fillOilSheet_actualprod(neighborsPool_before2014_oil, final_before2014_oil_test)
-sheet_arps <- fillOilSheet_arpsprod(neighborsPool_before2014_oil, final_before2014_oil_test, sheet_oil)
+sheet_arps <- fillOilSheet_arpsprod(neighborsPool_before2014_oil, final_before2014_oil_test, sheet_oil, 12)
 sheet_ml <- fillOilSheet_mlprod(neighborsPool_before2014_oil, final_before2014_oil_test, sheet_arps)
 
 
-sheet_all <- fillOilSheet(sheet_ml, newdataset_before2014_oil)
+sheet_all <- fillOilSheet(sheet_ml, newdataset_before2014_oil, final_before2014_oil_test, 12, neighborsPool_before2014_oil)
 

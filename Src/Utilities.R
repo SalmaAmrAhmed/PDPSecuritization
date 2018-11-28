@@ -793,11 +793,24 @@ curveParamsEstimation <- function(wellneighborsList, neighborsPool, include_zero
           
           # data$Liquid <- (data$Liquid / data$LATERAL_LENGTH_BLEND) * 9000
           
-          data$Liquid[is.na(data$Liquid)] <- 0
+          if (LiquidType == "oil") {
+            
+            data$Liquid[is.na(data$Liquid)] <- 0
+            
+            params <- try(grid_start_Liquid_optimize_on_fixed_b(data$Liquid,
+                                                                data$monthIndx,
+                                                                b))
+          } else if (LiquidType == "gas") {
+            
+            data$Gas[is.na(data$Gas)] <- 0
+            
+            params <- try(grid_start_Liquid_optimize_on_fixed_b(data$Gas,
+                                                             data$monthIndx,
+                                                             b))
+            
+          }
           
-          params <- try(grid_start_Liquid_optimize_on_fixed_b(data$Liquid,
-                                                              data$monthIndx,
-                                                              b))
+          
           
           if(inherits(params, "try-error"))
           {
@@ -820,10 +833,10 @@ curveParamsEstimation <- function(wellneighborsList, neighborsPool, include_zero
           # curveParamsList[["neigh_b"]] <- b
           
           
-          curveParamsList[["my_EUR"]] <- calculateEUR(qi = params$par[1],
-                                                      di_effective = as.effective(params$par[2], "month", "year"),
-                                                      b = b,
-                                                      df_effective = 0.07)
+          # curveParamsList[["my_EUR"]] <- calculateEUR(qi = params$par[1],
+          #                                             di_effective = as.effective(params$par[2], "month", "year"),
+          #                                             b = b,
+          #                                             df_effective = 0.07)
           
           
           # curveParamsList[["p50_EUR"]] <- calculateEUR(qi = listOut$p50_paramslist_Liquid_optimize_on_fixed_b$par[1],
@@ -910,7 +923,7 @@ sse <- function (q, forecast)
 }
 
 
-setNewFeatures <- function(dataset, curveParamsEstimationList, neighborsPool) {
+setNewFeaturesOil <- function(dataset, curveParamsEstimationList, neighborsPool) {
   
   new_dataset <- dataset
   
@@ -1127,6 +1140,188 @@ setNewFeatures <- function(dataset, curveParamsEstimationList, neighborsPool) {
   return(new_dataset)
 }
 
+setNewFeaturesGas <- function(dataset, curveParamsEstimationList, neighborsPool) {
+  
+  new_dataset <- dataset
+  
+  new_dataset$neigh_count <- NA
+  
+  new_dataset$my_qi <- NA
+  
+  new_dataset$my_di <- NA
+  
+  new_dataset$my_b <- NA
+  
+  
+  new_dataset$my_EUR <- NA
+  
+  new_dataset$p10rawcurve_seg1 <- NA
+  new_dataset$p10rawcurve_seg2 <- NA
+  new_dataset$p10rawcurve_seg3 <- NA
+  new_dataset$p10rawcurve_seg4 <- NA
+  
+  new_dataset$p50rawcurve_seg1 <- NA
+  new_dataset$p50rawcurve_seg2 <- NA
+  new_dataset$p50rawcurve_seg3 <- NA
+  new_dataset$p50rawcurve_seg4 <- NA
+  
+  new_dataset$p90rawcurve_seg1 <- NA
+  new_dataset$p90rawcurve_seg2 <- NA
+  new_dataset$p90rawcurve_seg3 <- NA
+  new_dataset$p90rawcurve_seg4 <- NA
+  
+  
+  neigh_API_list <- list()
+  
+  
+  trainsetseq <- seq(1, nrow(new_dataset), by = 1)
+  
+  for (i in trainsetseq) {
+    
+    print(i)
+    
+    my_qi <- as.numeric(curveParamsEstimationList[[new_dataset$API[i]]]$my_qi)
+    neigh_count <- as.numeric(curveParamsEstimationList[[new_dataset$API[i]]]$neighborsCount_IHS)
+    
+    my_di <- as.numeric(curveParamsEstimationList[[new_dataset$API[i]]]$my_di)
+    
+    my_b <- as.numeric(curveParamsEstimationList[[new_dataset$API[i]]]$my_b)
+    
+    my_EUR <- as.numeric(curveParamsEstimationList[[new_dataset$API[i]]]$my_EUR)
+    
+    data <- neighborsPool %>% dplyr::filter(API == new_dataset$API[i])
+    
+    my_rawcurve_length <- length(data$Gas)
+    remainder <- my_rawcurve_length %% 4
+    total <- my_rawcurve_length -  remainder
+    seg_capacity <- total / 4
+    end_point <- seg_capacity + remainder
+    my_rawcurve_seg1 <- sum(data$Gas[1:seg_capacity])
+    my_rawcurve_seg2 <- sum(data$Gas[(seg_capacity + 1):(seg_capacity * 2)])
+    my_rawcurve_seg3 <- sum(data$Gas[((seg_capacity * 2) + 1):(seg_capacity * 3)])
+    my_rawcurve_seg4 <- sum(data$Gas[((seg_capacity * 3) + 1):end_point])
+    
+    if (length(data) >= 12) {
+      
+      monthseq <- seq(1, 12, by = 1)
+      
+      for (j in monthseq) {
+        
+        columnname <- paste0("month_", eval(j))
+        
+        new_dataset[i, columnname] <- data$Gas[j]
+        
+      }
+      
+    }
+    
+    
+    
+    
+    p10rawcurve_length <- length(curveParamsEstimationList[[new_dataset$API[i]]]$p10rawframe$Liquid)
+    remainder <- p10rawcurve_length %% 4
+    total <- p10rawcurve_length -  remainder
+    seg_capacity <- total / 4
+    end_point <- seg_capacity + remainder
+    p10rawcurve_seg1 <- sum(curveParamsEstimationList[[new_dataset$API[i]]]$p10rawframe$Liquid[1:seg_capacity])
+    p10rawcurve_seg2 <- sum(curveParamsEstimationList[[new_dataset$API[i]]]$p10rawframe$Liquid[(seg_capacity + 1):(seg_capacity * 2)])
+    p10rawcurve_seg3 <- sum(curveParamsEstimationList[[new_dataset$API[i]]]$p10rawframe$Liquid[((seg_capacity * 2) + 1):(seg_capacity * 3)])
+    p10rawcurve_seg4 <- sum(curveParamsEstimationList[[new_dataset$API[i]]]$p10rawframe$Liquid[((seg_capacity * 3) + 1):end_point])
+    
+    
+    p50rawcurve_length <- length(curveParamsEstimationList[[new_dataset$API[i]]]$p50rawframe$Liquid)
+    remainder <- p50rawcurve_length %% 4
+    total <- p50rawcurve_length -  remainder
+    seg_capacity <- total / 4
+    end_point <- seg_capacity + remainder
+    p50rawcurve_seg1 <- sum(curveParamsEstimationList[[new_dataset$API[i]]]$p50rawframe$Liquid[1:seg_capacity])
+    p50rawcurve_seg2 <- sum(curveParamsEstimationList[[new_dataset$API[i]]]$p50rawframe$Liquid[(seg_capacity + 1):(seg_capacity * 2)])
+    p50rawcurve_seg3 <- sum(curveParamsEstimationList[[new_dataset$API[i]]]$p50rawframe$Liquid[((seg_capacity * 2) + 1):(seg_capacity * 3)])
+    p50rawcurve_seg4 <- sum(curveParamsEstimationList[[new_dataset$API[i]]]$p50rawframe$Liquid[((seg_capacity * 3) + 1):end_point])
+    
+    
+    p90rawcurve_length <- length(curveParamsEstimationList[[new_dataset$API[i]]]$p90rawframe$Liquid)
+    remainder <- p90rawcurve_length %% 4
+    total <- p90rawcurve_length -  remainder
+    seg_capacity <- total / 4
+    end_point <- seg_capacity + remainder
+    p90rawcurve_seg1 <- sum(curveParamsEstimationList[[new_dataset$API[i]]]$p90rawframe$Liquid[1:seg_capacity])
+    p90rawcurve_seg2 <- sum(curveParamsEstimationList[[new_dataset$API[i]]]$p90rawframe$Liquid[(seg_capacity + 1):(seg_capacity * 2)])
+    p90rawcurve_seg3 <- sum(curveParamsEstimationList[[new_dataset$API[i]]]$p90rawframe$Liquid[((seg_capacity * 2) + 1):(seg_capacity * 3)])
+    p90rawcurve_seg4 <- sum(curveParamsEstimationList[[new_dataset$API[i]]]$p90rawframe$Liquid[((seg_capacity * 3) + 1):end_point])
+    
+    
+    if (
+      length(my_qi) != 0 &
+      length(neigh_count) != 0 &
+      length(my_di) != 0 &
+      length(my_b) != 0 &
+      length(p10rawcurve_seg1) != 0 &
+      length(p10rawcurve_seg2) != 0 &
+      length(p10rawcurve_seg3) != 0 &
+      length(p10rawcurve_seg4) != 0 &
+      
+      length(p50rawcurve_seg1) != 0 &
+      length(p50rawcurve_seg2) != 0 &
+      length(p50rawcurve_seg3) != 0 &
+      length(p50rawcurve_seg4) != 0 &
+      
+      length(p90rawcurve_seg1) != 0 &
+      length(p90rawcurve_seg2) != 0 &
+      length(p90rawcurve_seg3) != 0 &
+      length(p90rawcurve_seg4) != 0 &
+      
+      length(my_rawcurve_seg1) != 0 &
+      length(my_rawcurve_seg2) != 0 &
+      length(my_rawcurve_seg3) != 0 &
+      length(my_rawcurve_seg4) != 0 &
+      
+      length(my_EUR) != 0
+    ) {
+      
+      
+      new_dataset$my_qi[i] <- my_qi
+      new_dataset$neigh_count[i] <- neigh_count
+      
+      
+      new_dataset$my_di[i] <- my_di
+      
+      new_dataset$my_b[i] <- my_b
+      
+      new_dataset$my_EUR[i] <- my_EUR
+      
+      
+      
+      new_dataset$p10rawcurve_seg1[i] <- p10rawcurve_seg1
+      new_dataset$p10rawcurve_seg2[i] <- p10rawcurve_seg2
+      new_dataset$p10rawcurve_seg3[i] <- p10rawcurve_seg3
+      new_dataset$p10rawcurve_seg4[i] <- p10rawcurve_seg4
+      
+      
+      new_dataset$p50rawcurve_seg1[i] <- p50rawcurve_seg1
+      new_dataset$p50rawcurve_seg2[i] <- p50rawcurve_seg2
+      new_dataset$p50rawcurve_seg3[i] <- p50rawcurve_seg3
+      new_dataset$p50rawcurve_seg4[i] <- p50rawcurve_seg4
+      
+      
+      new_dataset$p90rawcurve_seg1[i] <- p90rawcurve_seg1
+      new_dataset$p90rawcurve_seg2[i] <- p90rawcurve_seg2
+      new_dataset$p90rawcurve_seg3[i] <- p90rawcurve_seg3
+      new_dataset$p90rawcurve_seg4[i] <- p90rawcurve_seg4
+      
+      new_dataset$my_rawcurve_seg1[i] <- my_rawcurve_seg1
+      new_dataset$my_rawcurve_seg2[i] <- my_rawcurve_seg2
+      new_dataset$my_rawcurve_seg3[i] <- my_rawcurve_seg3
+      new_dataset$my_rawcurve_seg4[i] <- my_rawcurve_seg4
+      
+    }
+    
+  }
+  
+  
+  return(new_dataset)
+}
+
 
 
 
@@ -1178,7 +1373,8 @@ fillOilSheet_actualprod <- function(neighborsPool,
 
 fillOilSheet_arpsprod <- function(neighborsPool,
                                   dataset,
-                                  sheet_oil_actual) {
+                                  sheet_oil_actual,
+                                  monthcount) {
   
   sheet_oil <- list()
   
@@ -1200,20 +1396,31 @@ fillOilSheet_arpsprod <- function(neighborsPool,
   
   for (j in wellseq) {
     
-    production <- neighborsPool %>% dplyr::filter(API == sheet_oil$API[j]) %>% dplyr::select(Liquid)
+    production <- neighborsPool %>% dplyr::filter(API == sheet_oil$API[j])
     production_length <- length(production$Liquid)
     
-    my_qi <- dataset %>% dplyr::filter(API == sheet_oil$API[j]) %>% dplyr::select(my_qi)
-    my_qi <- my_qi$my_qi
-    
-    my_di <- dataset %>% dplyr::filter(API == sheet_oil$API[j]) %>% dplyr::select(my_di)
-    my_di <- my_di$my_di
+    production <- production %>% dplyr::filter(monthIndx >= 1 & monthIndx <= monthcount)
     
     my_b <- dataset %>% dplyr::filter(API == sheet_oil$API[j]) %>% dplyr::select(my_b)
     my_b <- my_b$my_b
     
+    
+    params <- try(grid_start_Liquid_optimize_on_fixed_b(production$Liquid,
+                                                        production$monthIndx,
+                                                        my_b))
+    
+    if(inherits(params, "try-error"))
+    {
+      next
+    }
+    
+    
+    my_qi <- params$par[1]
+    my_di <- as.effective(params$par[2], "month", "year")
+    
+    
     fitted <- hyp2exp.q(my_qi,
-                        as.nominal(my_di, from.period="year", to.period="month"),
+                        params$par[2],
                         my_b,
                         as.nominal(0.07, from.period="year", to.period="month"),
                         c(1:production_length) - 0.5)
@@ -1342,7 +1549,8 @@ fillGasSheet_actualprod <- function(neighborsPool,
 
 fillGasSheet_arpsprod <- function(neighborsPool,
                                   dataset,
-                                  sheet_Gas_actual) {
+                                  sheet_Gas_actual,
+                                  monthcount) {
   
   sheet_Gas <- list()
   
@@ -1364,20 +1572,31 @@ fillGasSheet_arpsprod <- function(neighborsPool,
   
   for (j in wellseq) {
     
-    production <- neighborsPool %>% dplyr::filter(API == sheet_Gas$API[j]) %>% dplyr::select(Gas)
+    production <- neighborsPool %>% dplyr::filter(API == sheet_Gas$API[j])
     production_length <- length(production$Gas)
     
-    my_qi <- dataset %>% dplyr::filter(API == sheet_Gas$API[j]) %>% dplyr::select(my_qi)
-    my_qi <- my_qi$my_qi
-    
-    my_di <- dataset %>% dplyr::filter(API == sheet_Gas$API[j]) %>% dplyr::select(my_di)
-    my_di <- my_di$my_di
+    production <- production %>% dplyr::filter(monthIndx >= 1 & monthIndx <= monthcount)
     
     my_b <- dataset %>% dplyr::filter(API == sheet_Gas$API[j]) %>% dplyr::select(my_b)
     my_b <- my_b$my_b
     
+    
+    params <- try(grid_start_Liquid_optimize_on_fixed_b(production$Gas,
+                                                        production$monthIndx,
+                                                        my_b))
+    
+    if(inherits(params, "try-error"))
+    {
+      next
+    }
+    
+    
+    my_qi <- params$par[1]
+    my_di <- as.effective(params$par[2], "month", "year")
+    
+    
     fitted <- hyp2exp.q(my_qi,
-                        as.nominal(my_di, from.period="year", to.period="month"),
+                        params$par[2],
                         my_b,
                         as.nominal(0.07, from.period="year", to.period="month"),
                         c(1:production_length) - 0.5)
@@ -1623,6 +1842,6 @@ fillGasSheet <- function(sheet_features, dataset, testset, monthcount, neighbors
 #sheet_all <- sheet_features
 
 # fillError <- function(sheet_all, ) {
-#   
+# 
 # }
 
