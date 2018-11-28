@@ -58,7 +58,7 @@ final_after2014_oil <- final_after2014_oil[complete.cases(final_after2014_oil),]
 # set.seed(5)
 # trainset_indx <- createDataPartition(data.response, p = 0.7, list = FALSE)
 
-API <- read.csv("final_after2014_oil_test_API.CSV")
+API <- read.csv("final_after2014_test_API.CSV")
 API$API <- sprintf("%1.f", API$API)
 API$API <- ifelse(startsWith(API$API, "5"), paste("0", as.character(API$API), sep = ""), as.character(API$API))
 

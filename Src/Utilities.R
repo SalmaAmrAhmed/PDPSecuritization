@@ -1,4 +1,4 @@
-oadLibraries <- function() {
+loadLibraries <- function() {
   
   write(paste0("start loading libraries from ", .libPaths()), stdout())
   
@@ -7,7 +7,7 @@ oadLibraries <- function() {
   
   options(repos=structure(c(CRAN="https://cran.cnr.berkeley.edu/")))
   
-  for (package in c('ggplot2', 'tvm', 'dplyr','aRpsDCA', 'plyr', 'jsonlite', 'reshape', 'RODBC',
+  for (package in c('ggplot2', 'tvm', 'dplyr','aRpsDCA', 'plyr', 'jsonlite', 'reshape',
                     'caret', 'randomForest', 'measurements', 'geosphere', 'Boruta')) {
     
     write(paste0("checking package ",package),  stdout())

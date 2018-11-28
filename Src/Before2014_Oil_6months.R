@@ -45,19 +45,16 @@ final_before2014_oil <- final_before2014_oil %>% dplyr::select(API,
                                                                my_qi,
                                                                my_di)
 
+# final_before2014_oil$my_di_secant <- as.nominal(final_before2014_oil$my_di, from.period="year", to.period="month")
+
+final_before2014_oil[final_before2014_oil == Inf] <- NA
 final_before2014_oil <- final_before2014_oil[complete.cases(final_before2014_oil),]
 
-# set.seed(5)
-# data.response <- final_before2014_oil[, "my_qi"]
-# set.seed(5)
-# trainset_indx <- createDataPartition(data.response, p = 0.7, list = FALSE)
+# qqplot(final_before2014_oil$my_di_secant, final_before2014_oil$my_qi)
 
-API <- read.csv("final_after2014_oil_test_API.CSV")
+API <- read.csv("final_before2014_test_API.CSV")
 API$API <- sprintf("%1.f", API$API)
 API$API <- ifelse(startsWith(API$API, "5"), paste("0", as.character(API$API), sep = ""), as.character(API$API))
-
-
-
 
 final_before2014_oil_test <- inner_join(final_before2014_oil, API, by = "API")
 final_before2014_oil_train <- anti_join(final_before2014_oil, API, by = "API")
