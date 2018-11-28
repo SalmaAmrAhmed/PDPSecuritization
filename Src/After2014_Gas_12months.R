@@ -88,3 +88,15 @@ di_model <-
                 tuneGrid = NULL,
                 trControl = trainControl(method="cv", number=10))
 
+final_after2014_gas_test$predicted_qi <- predict(qi_model, final_after2014_gas_test)
+final_after2014_gas_test$predicted_di <- predict(di_model, final_after2014_gas_test)
+
+final_after2014_gas_test <- inner_join(final_after2014_gas_test, newdataset_after2014_gas[, c("API", "my_b")], by = "API")
+
+sheet_gas <- fillGasSheet_actualprod(neighborsPool_after2014_gas, final_after2014_gas_test)
+sheet_arps <- fillGasSheet_arpsprod(neighborsPool_after2014_gas, final_after2014_gas_test, sheet_gas)
+sheet_ml <- fillGasSheet_mlprod(neighborsPool_after2014_gas, final_after2014_gas_test, sheet_arps)
+
+
+sheet_all <- fillGasSheet(sheet_ml, newdataset_after2014_gas)
+

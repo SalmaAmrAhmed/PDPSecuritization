@@ -87,3 +87,18 @@ di_model <-
                 tuneGrid = NULL,
                 trControl = trainControl(method="cv", number=10))
 
+
+final_after2014_oil_test$predicted_qi <- predict(qi_model, final_after2014_oil_test)
+final_after2014_oil_test$predicted_di <- predict(di_model, final_after2014_oil_test)
+
+
+final_after2014_oil_test <- inner_join(final_after2014_oil_test, newdataset_after2014_oil[, c("API", "my_b")], by = "API")
+
+sheet_oil <- fillOilSheet_actualprod(neighborsPool_after2014_oil, final_after2014_oil_test)
+sheet_arps <- fillOilSheet_arpsprod(neighborsPool_after2014_oil, final_after2014_oil_test, sheet_oil)
+sheet_ml <- fillOilSheet_mlprod(neighborsPool_after2014_oil, final_after2014_oil_test, sheet_arps)
+
+
+sheet_all <- fillOilSheet(sheet_ml, newdataset_after2014_oil, 
+                          final_after2014_oil_test, 12, neighborsPool_after2014_oil)
+

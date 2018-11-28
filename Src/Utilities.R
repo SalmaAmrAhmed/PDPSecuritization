@@ -891,6 +891,18 @@ calculateEUR <- function(qi, di_effective, b, df_effective) {
   
 }
 
+calculateGASEUR <- function(qi, di_effective, b, df_effective) {
+  
+  
+  dec <- arps.decline(qi, as.nominal(di_effective, from.period="year", to.period="day"), b,
+                      as.nominal(df_effective, from.period="year", to.period="day"))
+  eur <- arps.eur(dec, 20) / 1000
+  
+  return(eur)
+  
+}
+
+
 sse <- function (q, forecast) 
   
 {
@@ -1114,3 +1126,503 @@ setNewFeatures <- function(dataset, curveParamsEstimationList, neighborsPool) {
   # new_dataset <- new_dataset[complete.cases(new_dataset), ]
   return(new_dataset)
 }
+
+
+
+
+# sheet_alldata <- read.csv("PDP FORECASTING_ERROR TOOL_withoutError.CSV")
+
+
+fillOilSheet_actualprod <- function(neighborsPool,
+                                    dataset) {
+  
+  sheet_oil <- list()
+  
+  sheet_oil$API <- dataset$API
+  
+  sheet_oil <- as.data.frame(sheet_oil)
+  sheet_oil$API <- as.character(sheet_oil$API)
+  
+  monthseq <- seq(1, 72, by = 1)
+  
+  for (i in monthseq) {
+    
+    actualcolumnname <- paste0("oil_month_", eval(i))
+    
+    sheet_oil[i, actualcolumnname] <- NA
+  }
+  
+  wellseq <- seq(1, nrow(sheet_oil), by = 1)
+  
+  for (j in wellseq) {
+    
+    production <- neighborsPool %>% dplyr::filter(API == sheet_oil$API[j]) %>% dplyr::select(Liquid)
+  
+    production_length <- length(production$Liquid)
+    
+    if (production_length > 72) {
+      
+      remainder <- production_length %% 72
+      production_length <- production_length - remainder
+      
+    }
+  
+    sheet_oil[j, c(1:production_length + 1)] <- production$Liquid 
+  }
+  
+  sheet_oil$Forecast_type <- "actual"
+  
+  return(sheet_oil)
+}
+
+
+fillOilSheet_arpsprod <- function(neighborsPool,
+                                  dataset,
+                                  sheet_oil_actual) {
+  
+  sheet_oil <- list()
+  
+  sheet_oil$API <- dataset$API
+  
+  sheet_oil <- as.data.frame(sheet_oil)
+  sheet_oil$API <- as.character(sheet_oil$API)
+  
+  monthseq <- seq(1, 72, by = 1)
+  
+  for (i in monthseq) {
+    
+    actualcolumnname <- paste0("oil_month_", eval(i))
+    
+    sheet_oil[i, actualcolumnname] <- NA
+  }
+  
+  wellseq <- seq(1, nrow(sheet_oil), by = 1)
+  
+  for (j in wellseq) {
+    
+    production <- neighborsPool %>% dplyr::filter(API == sheet_oil$API[j]) %>% dplyr::select(Liquid)
+    production_length <- length(production$Liquid)
+    
+    my_qi <- dataset %>% dplyr::filter(API == sheet_oil$API[j]) %>% dplyr::select(my_qi)
+    my_qi <- my_qi$my_qi
+    
+    my_di <- dataset %>% dplyr::filter(API == sheet_oil$API[j]) %>% dplyr::select(my_di)
+    my_di <- my_di$my_di
+    
+    my_b <- dataset %>% dplyr::filter(API == sheet_oil$API[j]) %>% dplyr::select(my_b)
+    my_b <- my_b$my_b
+    
+    fitted <- hyp2exp.q(my_qi,
+                        as.nominal(my_di, from.period="year", to.period="month"),
+                        my_b,
+                        as.nominal(0.07, from.period="year", to.period="month"),
+                        c(1:production_length) - 0.5)
+    
+    if (production_length > 72) {
+      
+      remainder <- production_length %% 72
+      production_length <- production_length - remainder
+      
+    }
+    
+    sheet_oil[j, c(1:production_length + 1)] <- fitted
+  }
+  
+  sheet_oil$Forecast_type <- "arps"
+  
+  sheet_all <- rbind(sheet_oil_actual, sheet_oil)
+  
+  return(sheet_all)
+}
+
+
+fillOilSheet_mlprod <- function(neighborsPool,
+                                  dataset,
+                                  sheet_oil_arps) {
+  
+  sheet_oil <- list()
+  
+  sheet_oil$API <- dataset$API
+  
+  sheet_oil <- as.data.frame(sheet_oil)
+  sheet_oil$API <- as.character(sheet_oil$API)
+  
+  monthseq <- seq(1, 72, by = 1)
+  
+  for (i in monthseq) {
+    
+    actualcolumnname <- paste0("oil_month_", eval(i))
+    
+    sheet_oil[i, actualcolumnname] <- NA
+  }
+  
+  wellseq <- seq(1, nrow(sheet_oil), by = 1)
+  
+  for (j in wellseq) {
+    
+    production <- neighborsPool %>% dplyr::filter(API == sheet_oil$API[j]) %>% dplyr::select(Liquid)
+    production_length <- length(production$Liquid)
+    
+    predicted_qi <- dataset %>% dplyr::filter(API == sheet_oil$API[j]) %>% dplyr::select(predicted_qi)
+    predicted_qi <- predicted_qi$predicted_qi
+    
+    predicted_di <- dataset %>% dplyr::filter(API == sheet_oil$API[j]) %>% dplyr::select(predicted_di)
+    predicted_di <- predicted_di$predicted_di
+    
+    my_b <- dataset %>% dplyr::filter(API == sheet_oil$API[j]) %>% dplyr::select(my_b)
+    my_b <- my_b$my_b
+    
+    ml <- hyp2exp.q(predicted_qi,
+                        as.nominal(predicted_di, from.period="year", to.period="month"),
+                        my_b,
+                        as.nominal(0.07, from.period="year", to.period="month"),
+                        c(1:production_length) - 0.5)
+    
+    
+    if (production_length > 72) {
+      
+      remainder <- production_length %% 72
+      production_length <- production_length - remainder
+      
+    }
+    
+    sheet_oil[j, c(1:production_length + 1)] <- ml
+  }
+  
+  sheet_oil$Forecast_type <- "ml"
+  
+  sheet_all <- rbind(sheet_oil_arps, sheet_oil)
+  
+  return(sheet_all)
+}
+
+
+fillGasSheet_actualprod <- function(neighborsPool,
+                                    dataset) {
+  
+  sheet_Gas <- list()
+  
+  sheet_Gas$API <- dataset$API
+  
+  sheet_Gas <- as.data.frame(sheet_Gas)
+  sheet_Gas$API <- as.character(sheet_Gas$API)
+  
+  monthseq <- seq(1, 72, by = 1)
+  
+  for (i in monthseq) {
+    
+    actualcolumnname <- paste0("gas_month_", eval(i))
+    
+    sheet_Gas[i, actualcolumnname] <- NA
+  }
+  
+  wellseq <- seq(1, nrow(sheet_Gas), by = 1)
+  
+  for (j in wellseq) {
+    
+    production <- neighborsPool %>% dplyr::filter(API == sheet_Gas$API[j]) %>% dplyr::select(Gas)
+    
+    production_length <- length(production$Gas)
+    
+    if (production_length > 72) {
+      
+      remainder <- production_length %% 72
+      production_length <- production_length - remainder
+      
+    }
+    
+    sheet_Gas[j, c(1:production_length + 1)] <- production$Gas 
+  }
+  
+  sheet_Gas$Forecast_type <- "actual"
+  
+  return(sheet_Gas)
+}
+
+
+fillGasSheet_arpsprod <- function(neighborsPool,
+                                  dataset,
+                                  sheet_Gas_actual) {
+  
+  sheet_Gas <- list()
+  
+  sheet_Gas$API <- dataset$API
+  
+  sheet_Gas <- as.data.frame(sheet_Gas)
+  sheet_Gas$API <- as.character(sheet_Gas$API)
+  
+  monthseq <- seq(1, 72, by = 1)
+  
+  for (i in monthseq) {
+    
+    actualcolumnname <- paste0("gas_month_", eval(i))
+    
+    sheet_Gas[i, actualcolumnname] <- NA
+  }
+  
+  wellseq <- seq(1, nrow(sheet_Gas), by = 1)
+  
+  for (j in wellseq) {
+    
+    production <- neighborsPool %>% dplyr::filter(API == sheet_Gas$API[j]) %>% dplyr::select(Gas)
+    production_length <- length(production$Gas)
+    
+    my_qi <- dataset %>% dplyr::filter(API == sheet_Gas$API[j]) %>% dplyr::select(my_qi)
+    my_qi <- my_qi$my_qi
+    
+    my_di <- dataset %>% dplyr::filter(API == sheet_Gas$API[j]) %>% dplyr::select(my_di)
+    my_di <- my_di$my_di
+    
+    my_b <- dataset %>% dplyr::filter(API == sheet_Gas$API[j]) %>% dplyr::select(my_b)
+    my_b <- my_b$my_b
+    
+    fitted <- hyp2exp.q(my_qi,
+                        as.nominal(my_di, from.period="year", to.period="month"),
+                        my_b,
+                        as.nominal(0.07, from.period="year", to.period="month"),
+                        c(1:production_length) - 0.5)
+    
+    if (production_length > 72) {
+      
+      remainder <- production_length %% 72
+      production_length <- production_length - remainder
+      
+    }
+    
+    sheet_Gas[j, c(1:production_length + 1)] <- fitted
+  }
+  
+  sheet_Gas$Forecast_type <- "arps"
+  
+  sheet_all <- rbind(sheet_Gas_actual, sheet_Gas)
+  
+  return(sheet_all)
+}
+
+
+fillGasSheet_mlprod <- function(neighborsPool,
+                                dataset,
+                                sheet_Gas_arps) {
+  
+  sheet_Gas <- list()
+  
+  sheet_Gas$API <- dataset$API
+  
+  sheet_Gas <- as.data.frame(sheet_Gas)
+  sheet_Gas$API <- as.character(sheet_Gas$API)
+  
+  monthseq <- seq(1, 72, by = 1)
+  
+  for (i in monthseq) {
+    
+    actualcolumnname <- paste0("gas_month_", eval(i))
+    
+    sheet_Gas[i, actualcolumnname] <- NA
+  }
+  
+  wellseq <- seq(1, nrow(sheet_Gas), by = 1)
+  
+  for (j in wellseq) {
+    
+    production <- neighborsPool %>% dplyr::filter(API == sheet_Gas$API[j]) %>% dplyr::select(Gas)
+    production_length <- length(production$Gas)
+    
+    predicted_qi <- dataset %>% dplyr::filter(API == sheet_Gas$API[j]) %>% dplyr::select(predicted_qi)
+    predicted_qi <- predicted_qi$predicted_qi
+    
+    predicted_di <- dataset %>% dplyr::filter(API == sheet_Gas$API[j]) %>% dplyr::select(predicted_di)
+    predicted_di <- predicted_di$predicted_di
+    
+    my_b <- dataset %>% dplyr::filter(API == sheet_Gas$API[j]) %>% dplyr::select(my_b)
+    my_b <- my_b$my_b
+    
+    ml <- hyp2exp.q(predicted_qi,
+                    as.nominal(predicted_di, from.period="year", to.period="month"),
+                    my_b,
+                    as.nominal(0.07, from.period="year", to.period="month"),
+                    c(1:production_length) - 0.5)
+    
+    
+    if (production_length > 72) {
+      
+      remainder <- production_length %% 72
+      production_length <- production_length - remainder
+      
+    }
+    
+    sheet_Gas[j, c(1:production_length + 1)] <- ml
+  }
+  
+  sheet_Gas$Forecast_type <- "ml"
+  
+  sheet_all <- rbind(sheet_Gas_arps, sheet_Gas)
+  
+  return(sheet_all)
+}
+
+
+#sheet_ml <- sheet_features
+#newdataset_after2014_oil <- dataset
+
+fillOilSheet <- function(sheet_features, dataset, testset, monthcount, neighborsPool) {
+  
+  sheet_features$OPERATOR <- NA
+  sheet_features$BASIN <- NA
+  sheet_features$COUNTY <- NA
+  sheet_features$STATE <- NA
+  sheet_features$LATERAL_LENGTH_BLEND <- NA
+  sheet_features$EUR_OIL_MBO <- NA
+  
+  wellseq <- seq(1, nrow(sheet_features), by = 1)
+  
+  for (i in wellseq) {
+    
+    print(i)
+    
+    row <- dataset %>% dplyr::filter(API == sheet_features$API[i])
+    
+    sheet_features[i, "OPERATOR"] <- row[1, "operator_alias"]
+    sheet_features[i, "BASIN"] <- row[1, "BasinName"]
+    sheet_features[i, "COUNTY"] <- row[1, "CountyName"]
+    
+    sheet_features[i, "STATE"] <- row[1, "StateName"]
+    sheet_features[i, "LATERAL_LENGTH_BLEND"] <- row[1, "LATERAL_LENGTH_BLEND"]
+    
+    
+    if (sheet_features[i, "Forecast_type"] == "ml") {
+      
+      my_qi <- testset %>% dplyr::filter(API == sheet_features$API[i]) %>% dplyr::select(predicted_qi)
+      my_qi <- my_qi$predicted_qi
+      
+      my_di <- testset %>% dplyr::filter(API == sheet_features$API[i]) %>% dplyr::select(predicted_di)
+      my_di <- my_di$predicted_di
+      
+      my_b <- testset %>% dplyr::filter(API == sheet_features$API[i]) %>% dplyr::select(my_b)
+      my_b <- my_b$my_b
+      
+      EUR <- calculateEUR(qi = my_qi,
+                          di_effective = my_di,
+                          b = my_b,
+                          df_effective = 0.07)
+      
+      sheet_features[i, "EUR_OIL_MBO"] <- EUR
+      
+    } else if (sheet_features[i, "Forecast_type"] == "arps") {
+      
+      data <- neighborsPool %>% dplyr::filter(API == sheet_features$API[i])
+      data <- data %>% dplyr::filter(monthIndx >= 1 & monthIndx <= monthcount)
+      
+      my_b <- testset %>% dplyr::filter(API == sheet_features$API[i]) %>% dplyr::select(my_b)
+      my_b <- my_b$my_b
+      
+      
+      params <- try(grid_start_Liquid_optimize_on_fixed_b(data$Liquid,
+                                                          data$monthIndx,
+                                                          my_b))
+
+      if(inherits(params, "try-error"))
+      {
+        next
+      }
+      
+      
+      my_qi <- params$par[1]
+      my_di <- as.effective(params$par[2], "month", "year")
+      EUR <- calculateEUR(qi = my_qi,
+                             di_effective = my_di,
+                             b = my_b,
+                             df_effective = 0.07)
+      
+      sheet_features[i, "EUR_OIL_MBO"] <- EUR
+    } 
+    
+  }
+  
+  return(sheet_features)
+}
+
+
+#sheet_all <- sheet_features
+#newdataset_after2014_oil <- dataset
+#final_after2014_oil_test <- testset
+#monthcount <- monthsCountToFitOn 
+#neighborsPool_after2014_gas <- neighborsPool
+
+
+fillGasSheet <- function(sheet_features, dataset, testset, monthcount, neighborsPool) {
+  
+  
+  sheet_features$EUR_GAS_MMCF <- NA
+  
+  wellseq <- seq(1, nrow(sheet_features), by = 1)
+  
+  for (i in wellseq) {
+    
+    print(i)
+    row <- dataset %>% dplyr::filter(API == sheet_features$API[i])
+    
+    
+    if (sheet_features[i, "Forecast_type"] == "ml") {
+      
+      my_qi <- testset %>% dplyr::filter(API == sheet_features$API[i]) %>% dplyr::select(predicted_qi)
+      my_qi <- my_qi$predicted_qi
+      
+      my_di <- testset %>% dplyr::filter(API == sheet_features$API[i]) %>% dplyr::select(predicted_di)
+      my_di <- my_di$predicted_di
+      
+      my_b <- testset %>% dplyr::filter(API == sheet_features$API[i]) %>% dplyr::select(my_b)
+      my_b <- my_b$my_b
+      
+      EUR <- calculateGASEUR(qi = my_qi,
+                             di_effective = my_di,
+                             b = my_b,
+                             df_effective = 0.07)
+      
+      sheet_features[i, "EUR_OIL_MMCF"] <- EUR
+      
+    } else if (sheet_features[i, "Forecast_type"] == "arps") {
+      
+      data <- neighborsPool %>% dplyr::filter(API == sheet_features$API[i])
+      
+      data <- data %>% dplyr::filter(monthIndx >= 1 && monthIndx <= monthcount)
+      
+      my_b <- testset %>% dplyr::filter(API == sheet_features$API[i]) %>% dplyr::select(my_b)
+      my_b <- my_b$my_b
+      
+      
+      params <- try(grid_start_Liquid_optimize_on_fixed_b(data$Gas,
+                                                          data$monthIndx,
+                                                          my_b))
+      
+      if(inherits(params, "try-error"))
+      {
+        
+        next
+      }
+      
+      
+      my_qi <- params$par[1]
+      my_di <- as.effective(params$par[2], "month", "year")
+      EUR <- calculateGASEUR(qi = my_qi,
+                             di_effective = my_di,
+                             b = my_b,
+                             df_effective = 0.07)
+      
+      sheet_features[i, "EUR_OIL_MMCF"] <- EUR
+      
+    } 
+    
+  }
+  
+  
+  return(sheet_features)
+  
+}
+
+
+#sheet_all <- sheet_features
+
+# fillError <- function(sheet_all, ) {
+#   
+# }
+
