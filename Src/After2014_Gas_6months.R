@@ -1,5 +1,11 @@
 #Experiment1: 
 
+newdataset_after2014_gas <- read.csv("newdataset_after2014_gas.CSV")
+newdataset_after2014_gas$API <- sprintf("%1.f", newdataset_after2014_gas$API)
+newdataset_after2014_gas$API <- ifelse(startsWith(newdataset_after2014_gas$API, "5"),
+                                        paste("0", as.character(newdataset_after2014_gas$API), sep = ""),
+                                        as.character(newdataset_after2014_gas$API))
+
 final_after2014_gas <- newdataset_after2014_gas
 
 final_after2014_gas <- final_after2014_gas %>% dplyr::select(API,

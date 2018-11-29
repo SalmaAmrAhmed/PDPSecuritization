@@ -94,9 +94,11 @@ sheet_gas <- fillGasSheet_actualprod(neighborsPool_before2014_gas, final_before2
 sheet_arps <- fillGasSheet_arpsprod(neighborsPool_before2014_gas, final_before2014_gas_test, sheet_gas, 12)
 sheet_ml <- fillGasSheet_mlprod(neighborsPool_before2014_gas, final_before2014_gas_test, sheet_arps)
 
-
-
 sheet_all <- fillGasSheet(sheet_ml, newdataset_before2014_gas, final_before2014_gas_test, 12, neighborsPool_before2014_gas)
 
 
+sheet_final <- fillGasError(sheet_all)
+
+sheet_final$FORECAST_NAME <- 12
+write.csv(sheet_final, "sheet_final_before2014_gas_12.CSV", row.names = FALSE)
 

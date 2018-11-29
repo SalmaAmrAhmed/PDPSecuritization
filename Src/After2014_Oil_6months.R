@@ -94,6 +94,9 @@ sheet_all <- fillOilSheet(sheet_ml, newdataset_after2014_oil, final_after2014_oi
 
 sheet_final <- fillOilError(sheet_all)
 
+sheet_final$FORECAST_NAME <- 6
+write.csv(sheet_final, "sheet_final_after2014_oil_6.CSV", row.names = FALSE)
+
 # 100 * (1 - mean(abs(final_after2014_oil_test$predicted_qi - final_after2014_oil_test$my_qi) / final_after2014_oil_test$my_qi))
 # 100 * (1 - mean(abs(final_after2014_oil_test$predicted_di - final_after2014_oil_test$my_di) / final_after2014_oil_test$my_di))
 

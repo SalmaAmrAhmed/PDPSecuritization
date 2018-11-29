@@ -103,3 +103,6 @@ sheet_all <- fillOilSheet(sheet_ml, newdataset_after2014_oil,
                           final_after2014_oil_test, 12, neighborsPool_after2014_oil)
 
 sheet_final <- fillOilError(sheet_all)
+
+sheet_final$FORECAST_NAME <- 12
+write.csv(sheet_final, "sheet_final_after2014_oil_12.CSV", row.names = FALSE)
