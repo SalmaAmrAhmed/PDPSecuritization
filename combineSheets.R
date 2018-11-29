@@ -118,5 +118,21 @@ oil_before <- rbind(sheet_final_before2014_oil_3,
                    sheet_final_before2014_oil_9,
                    sheet_final_before2014_oil_12)
 
+oil_before[oil_before$Forecast_type == "actual", 245] <- NA
+oil_before <- distinct(oil_before)
+
+gas_before[gas_before$Forecast_type == "actual", 240] <- NA
+gas_before <- distinct(gas_before)
+
+before_2014 <- merge(oil_before, gas_before)
+
+
+oil_after[oil_after$Forecast_type == "actual", 245] <- NA
+oil_after <- distinct(oil_after)
+
+gas_after[gas_after$Forecast_type == "actual", 240] <- NA
+gas_after <- distinct(gas_after)
+
+after_2014 <- merge(oil_after, gas_after)
   
   
