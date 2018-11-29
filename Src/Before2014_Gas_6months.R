@@ -103,3 +103,7 @@ sheet_all <- fillGasSheet(sheet_ml, newdataset_before2014_gas, final_before2014_
 
 sheet_final <- fillGasError(sheet_all)
 
+
+sheet_final$FORECAST_NAME <- 6
+write.csv(sheet_final, "sheet_final_before2014_gas_6.CSV", row.names = FALSE)
+

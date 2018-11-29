@@ -1797,13 +1797,13 @@ fillGasSheet <- function(sheet_features, dataset, testset, monthcount, neighbors
                              b = my_b,
                              df_effective = 0.07)
       
-      sheet_features[i, "EUR_OIL_MMCF"] <- EUR
+      sheet_features[i, "EUR_GAS_MMCF"] <- EUR
       
     } else if (sheet_features[i, "Forecast_type"] == "arps") {
       
       data <- neighborsPool %>% dplyr::filter(API == sheet_features$API[i])
       
-      data <- data %>% dplyr::filter(monthIndx >= 1 && monthIndx <= monthcount)
+      data <- data %>% dplyr::filter(monthIndx >= 1 & monthIndx <= monthcount)
       
       my_b <- testset %>% dplyr::filter(API == sheet_features$API[i]) %>% dplyr::select(my_b)
       my_b <- my_b$my_b
@@ -1827,7 +1827,7 @@ fillGasSheet <- function(sheet_features, dataset, testset, monthcount, neighbors
                              b = my_b,
                              df_effective = 0.07)
       
-      sheet_features[i, "EUR_OIL_MMCF"] <- EUR
+      sheet_features[i, "EUR_GAS_MMCF"] <- EUR
       
     } 
     
