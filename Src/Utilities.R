@@ -805,8 +805,8 @@ curveParamsEstimation <- function(wellneighborsList, neighborsPool, include_zero
             data$Gas[is.na(data$Gas)] <- 0
             
             params <- try(grid_start_Liquid_optimize_on_fixed_b(data$Gas,
-                                                             data$monthIndx,
-                                                             b))
+                                                                data$monthIndx,
+                                                                b))
             
           }
           
@@ -1251,11 +1251,11 @@ setNewFeaturesGas <- function(dataset, curveParamsEstimationList, neighborsPool)
     p90rawcurve_seg4 <- sum(curveParamsEstimationList[[new_dataset$API[i]]]$p90rawframe$Liquid[((seg_capacity * 3) + 1):end_point])
     
     
-    # if (
-    #   length(my_qi) != 0 &
-    #   length(neigh_count) != 0 &
-    #   length(my_di) != 0 &
-    #   length(my_b) != 0 &
+    if (
+      length(my_qi) != 0 &
+      length(neigh_count) != 0 &
+      length(my_di) != 0 &
+      length(my_b) != 0 
     #   length(p10rawcurve_seg1) != 0 &
     #   length(p10rawcurve_seg2) != 0 &
     #   length(p10rawcurve_seg3) != 0 &
@@ -1277,46 +1277,46 @@ setNewFeaturesGas <- function(dataset, curveParamsEstimationList, neighborsPool)
     #   length(my_rawcurve_seg4) != 0 &
     #   
     #   length(my_EUR) != 0
-    # ) {
-      
-      
-      new_dataset$my_qi[i] <- my_qi
-      new_dataset$neigh_count[i] <- neigh_count
-      
-      
-      new_dataset$my_di[i] <- my_di
-      
-      new_dataset$my_b[i] <- my_b
-      
-      # new_dataset$my_EUR[i] <- my_EUR
-      
-      
-      
-      new_dataset$p10rawcurve_seg1[i] <- p10rawcurve_seg1
-      new_dataset$p10rawcurve_seg2[i] <- p10rawcurve_seg2
-      new_dataset$p10rawcurve_seg3[i] <- p10rawcurve_seg3
-      new_dataset$p10rawcurve_seg4[i] <- p10rawcurve_seg4
-      
-      
-      new_dataset$p50rawcurve_seg1[i] <- p50rawcurve_seg1
-      new_dataset$p50rawcurve_seg2[i] <- p50rawcurve_seg2
-      new_dataset$p50rawcurve_seg3[i] <- p50rawcurve_seg3
-      new_dataset$p50rawcurve_seg4[i] <- p50rawcurve_seg4
-      
-      
-      new_dataset$p90rawcurve_seg1[i] <- p90rawcurve_seg1
-      new_dataset$p90rawcurve_seg2[i] <- p90rawcurve_seg2
-      new_dataset$p90rawcurve_seg3[i] <- p90rawcurve_seg3
-      new_dataset$p90rawcurve_seg4[i] <- p90rawcurve_seg4
-      
-      new_dataset$my_rawcurve_seg1[i] <- my_rawcurve_seg1
-      new_dataset$my_rawcurve_seg2[i] <- my_rawcurve_seg2
-      new_dataset$my_rawcurve_seg3[i] <- my_rawcurve_seg3
-      new_dataset$my_rawcurve_seg4[i] <- my_rawcurve_seg4
-      
-    }
+    ) {
     
-  # }
+    
+    new_dataset$my_qi[i] <- my_qi
+    new_dataset$neigh_count[i] <- neigh_count
+    
+    
+    new_dataset$my_di[i] <- my_di
+    
+    new_dataset$my_b[i] <- my_b
+    
+    # new_dataset$my_EUR[i] <- my_EUR
+    
+    
+    
+    new_dataset$p10rawcurve_seg1[i] <- p10rawcurve_seg1
+    new_dataset$p10rawcurve_seg2[i] <- p10rawcurve_seg2
+    new_dataset$p10rawcurve_seg3[i] <- p10rawcurve_seg3
+    new_dataset$p10rawcurve_seg4[i] <- p10rawcurve_seg4
+    
+    
+    new_dataset$p50rawcurve_seg1[i] <- p50rawcurve_seg1
+    new_dataset$p50rawcurve_seg2[i] <- p50rawcurve_seg2
+    new_dataset$p50rawcurve_seg3[i] <- p50rawcurve_seg3
+    new_dataset$p50rawcurve_seg4[i] <- p50rawcurve_seg4
+    
+    
+    new_dataset$p90rawcurve_seg1[i] <- p90rawcurve_seg1
+    new_dataset$p90rawcurve_seg2[i] <- p90rawcurve_seg2
+    new_dataset$p90rawcurve_seg3[i] <- p90rawcurve_seg3
+    new_dataset$p90rawcurve_seg4[i] <- p90rawcurve_seg4
+    
+    new_dataset$my_rawcurve_seg1[i] <- my_rawcurve_seg1
+    new_dataset$my_rawcurve_seg2[i] <- my_rawcurve_seg2
+    new_dataset$my_rawcurve_seg3[i] <- my_rawcurve_seg3
+    new_dataset$my_rawcurve_seg4[i] <- my_rawcurve_seg4
+    
+  }
+  
+  }
   
   
   return(new_dataset)
@@ -1352,7 +1352,7 @@ fillOilSheet_actualprod <- function(neighborsPool,
   for (j in wellseq) {
     
     production <- neighborsPool %>% dplyr::filter(API == sheet_oil$API[j]) %>% dplyr::select(Liquid)
-  
+    
     production_length <- length(production$Liquid)
     
     if (production_length > 72) {
@@ -1361,7 +1361,7 @@ fillOilSheet_actualprod <- function(neighborsPool,
       production_length <- production_length - remainder
       
     }
-  
+    
     sheet_oil[j, c(1:production_length + 1)] <- production$Liquid 
   }
   
@@ -1444,8 +1444,8 @@ fillOilSheet_arpsprod <- function(neighborsPool,
 
 
 fillOilSheet_mlprod <- function(neighborsPool,
-                                  dataset,
-                                  sheet_oil_arps) {
+                                dataset,
+                                sheet_oil_arps) {
   
   sheet_oil <- list()
   
@@ -1480,10 +1480,10 @@ fillOilSheet_mlprod <- function(neighborsPool,
     my_b <- my_b$my_b
     
     ml <- hyp2exp.q(predicted_qi,
-                        as.nominal(predicted_di, from.period="year", to.period="month"),
-                        my_b,
-                        as.nominal(0.07, from.period="year", to.period="month"),
-                        c(1:production_length) - 0.5)
+                    as.nominal(predicted_di, from.period="year", to.period="month"),
+                    my_b,
+                    as.nominal(0.07, from.period="year", to.period="month"),
+                    c(1:production_length) - 0.5)
     
     
     if (production_length > 72) {
@@ -1738,7 +1738,7 @@ fillOilSheet <- function(sheet_features, dataset, testset, monthcount, neighbors
       params <- try(grid_start_Liquid_optimize_on_fixed_b(data$Liquid,
                                                           data$monthIndx,
                                                           my_b))
-
+      
       if(inherits(params, "try-error"))
       {
         next
@@ -1748,9 +1748,9 @@ fillOilSheet <- function(sheet_features, dataset, testset, monthcount, neighbors
       my_qi <- params$par[1]
       my_di <- as.effective(params$par[2], "month", "year")
       EUR <- calculateEUR(qi = my_qi,
-                             di_effective = my_di,
-                             b = my_b,
-                             df_effective = 0.07)
+                          di_effective = my_di,
+                          b = my_b,
+                          df_effective = 0.07)
       
       sheet_features[i, "EUR_OIL_MBO"] <- EUR
     } 
@@ -2045,8 +2045,8 @@ fillOilError <- function(sheet_all) {
     bigframe <- rbind(bigframe, frame)
     
   }
+  return(bigframe)
   
-
 }
 
 fillGasError <- function(sheet_all) {
@@ -2253,7 +2253,7 @@ fillGasError <- function(sheet_all) {
     bigframe <- rbind(bigframe, frame)
     
   }
-  
+  return(bigframe)
   
 }
 
@@ -2297,5 +2297,4 @@ fillGasError <- function(sheet_all) {
 #   
 #   return(list("month.error"= error, "month.percentage"= relative.error, "year.error"= year.errors, "year.percentage"= year.re))
 # }
-
 

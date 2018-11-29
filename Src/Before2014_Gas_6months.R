@@ -1,4 +1,10 @@
 #Experiment1: 
+newdataset_before2014_gas <- read.csv("newdataset_before2014_gas.CSV")
+newdataset_before2014_gas$API <- sprintf("%1.f", newdataset_before2014_gas$API)
+newdataset_before2014_gas$API <- ifelse(startsWith(newdataset_before2014_gas$API, "5"),
+                                           paste("0", as.character(newdataset_before2014_gas$API), sep = ""),
+                                           as.character(newdataset_before2014_gas$API))
+
 
 final_before2014_gas <- newdataset_before2014_gas
 
