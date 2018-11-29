@@ -1153,7 +1153,7 @@ setNewFeaturesGas <- function(dataset, curveParamsEstimationList, neighborsPool)
   new_dataset$my_b <- NA
   
   
-  new_dataset$my_EUR <- NA
+  # new_dataset$my_EUR <- NA
   
   new_dataset$p10rawcurve_seg1 <- NA
   new_dataset$p10rawcurve_seg2 <- NA
@@ -1187,7 +1187,7 @@ setNewFeaturesGas <- function(dataset, curveParamsEstimationList, neighborsPool)
     
     my_b <- as.numeric(curveParamsEstimationList[[new_dataset$API[i]]]$my_b)
     
-    my_EUR <- as.numeric(curveParamsEstimationList[[new_dataset$API[i]]]$my_EUR)
+    # my_EUR <- as.numeric(curveParamsEstimationList[[new_dataset$API[i]]]$my_EUR)
     
     data <- neighborsPool %>% dplyr::filter(API == new_dataset$API[i])
     
@@ -1251,33 +1251,33 @@ setNewFeaturesGas <- function(dataset, curveParamsEstimationList, neighborsPool)
     p90rawcurve_seg4 <- sum(curveParamsEstimationList[[new_dataset$API[i]]]$p90rawframe$Liquid[((seg_capacity * 3) + 1):end_point])
     
     
-    if (
-      length(my_qi) != 0 &
-      length(neigh_count) != 0 &
-      length(my_di) != 0 &
-      length(my_b) != 0 &
-      length(p10rawcurve_seg1) != 0 &
-      length(p10rawcurve_seg2) != 0 &
-      length(p10rawcurve_seg3) != 0 &
-      length(p10rawcurve_seg4) != 0 &
-      
-      length(p50rawcurve_seg1) != 0 &
-      length(p50rawcurve_seg2) != 0 &
-      length(p50rawcurve_seg3) != 0 &
-      length(p50rawcurve_seg4) != 0 &
-      
-      length(p90rawcurve_seg1) != 0 &
-      length(p90rawcurve_seg2) != 0 &
-      length(p90rawcurve_seg3) != 0 &
-      length(p90rawcurve_seg4) != 0 &
-      
-      length(my_rawcurve_seg1) != 0 &
-      length(my_rawcurve_seg2) != 0 &
-      length(my_rawcurve_seg3) != 0 &
-      length(my_rawcurve_seg4) != 0 &
-      
-      length(my_EUR) != 0
-    ) {
+    # if (
+    #   length(my_qi) != 0 &
+    #   length(neigh_count) != 0 &
+    #   length(my_di) != 0 &
+    #   length(my_b) != 0 &
+    #   length(p10rawcurve_seg1) != 0 &
+    #   length(p10rawcurve_seg2) != 0 &
+    #   length(p10rawcurve_seg3) != 0 &
+    #   length(p10rawcurve_seg4) != 0 &
+    #   
+    #   length(p50rawcurve_seg1) != 0 &
+    #   length(p50rawcurve_seg2) != 0 &
+    #   length(p50rawcurve_seg3) != 0 &
+    #   length(p50rawcurve_seg4) != 0 &
+    #   
+    #   length(p90rawcurve_seg1) != 0 &
+    #   length(p90rawcurve_seg2) != 0 &
+    #   length(p90rawcurve_seg3) != 0 &
+    #   length(p90rawcurve_seg4) != 0 &
+    #   
+    #   length(my_rawcurve_seg1) != 0 &
+    #   length(my_rawcurve_seg2) != 0 &
+    #   length(my_rawcurve_seg3) != 0 &
+    #   length(my_rawcurve_seg4) != 0 &
+    #   
+    #   length(my_EUR) != 0
+    # ) {
       
       
       new_dataset$my_qi[i] <- my_qi
@@ -1288,7 +1288,7 @@ setNewFeaturesGas <- function(dataset, curveParamsEstimationList, neighborsPool)
       
       new_dataset$my_b[i] <- my_b
       
-      new_dataset$my_EUR[i] <- my_EUR
+      # new_dataset$my_EUR[i] <- my_EUR
       
       
       
@@ -1316,7 +1316,7 @@ setNewFeaturesGas <- function(dataset, curveParamsEstimationList, neighborsPool)
       
     }
     
-  }
+  # }
   
   
   return(new_dataset)
@@ -1841,7 +1841,461 @@ fillGasSheet <- function(sheet_features, dataset, testset, monthcount, neighbors
 
 #sheet_all <- sheet_features
 
-# fillError <- function(sheet_all, ) {
-# 
+fillOilError <- function(sheet_all) {
+  
+  #month
+  monthseq <- seq(1, 72, by = 1)
+  
+  for (i in monthseq) {
+    
+    actualcolumnname <- paste0("oil_month_", eval(i), "_error")
+    
+    sheet_all[i, actualcolumnname] <- NA
+  }
+  
+  #month%
+  monthseq <- seq(1, 72, by = 1)
+  
+  for (i in monthseq) {
+    
+    actualcolumnname <- paste0("oil_month_", eval(i), "_error_percent")
+    
+    sheet_all[i, actualcolumnname] <- NA
+  }
+  
+  #year
+  yearseq <- seq(1, 5, by = 1)
+  
+  for (i in yearseq) {
+    
+    actualcolumnname <- paste0("oil_year_", eval(i), "_error")
+    
+    sheet_all[i, actualcolumnname] <- NA
+  }
+  
+  #year percent
+  yearseq <- seq(1, 5, by = 1)
+  
+  for (i in yearseq) {
+    
+    actualcolumnname <- paste0("oil_year_", eval(i), "_error_percent")
+    
+    sheet_all[i, actualcolumnname] <- NA
+  }
+  
+  #year cum
+  yearseq <- seq(1, 5, by = 1)
+  
+  for (i in yearseq) {
+    
+    actualcolumnname <- paste0("oil_year_", eval(i), "_cum_error")
+    
+    sheet_all[i, actualcolumnname] <- NA
+  }
+  
+  #year cum percent
+  yearseq <- seq(1, 5, by = 1)
+  
+  for (i in yearseq) {
+    
+    actualcolumnname <- paste0("oil_year_", eval(i), "_cum_error_percent")
+    
+    sheet_all[i, actualcolumnname] <- NA
+  }
+  
+  
+  sheetList <- split(sheet_all, as.factor(sheet_all$API))
+  listseq <- seq(1, length(sheetList), by = 1)
+  
+  bigframe <- data.frame()
+  
+  for (i in listseq) {
+    
+    API <- names(sheetList)[i]
+    
+    #from col 2 till col 73
+    actual_row <- sheetList[[API]] %>% dplyr::filter(Forecast_type == "actual")
+    arps_row <- sheetList[[API]] %>% dplyr::filter(Forecast_type == "arps")
+    ml_row <- sheetList[[API]] %>% dplyr::filter(Forecast_type == "ml")
+    
+    
+    #from col 81 till col 152 -> error
+    frame <- sheetList[[API]]
+    frame[frame$Forecast_type == "arps",c(81:152)] <- arps_row[1,c(2:73)] - actual_row[1,c(2:73)]
+    frame[frame$Forecast_type == "ml",c(81:152)] <- ml_row[1,c(2:73)] - actual_row[1,c(2:73)]
+    
+    
+    
+    #from col 153 till 224 -> error percent
+    frame[frame$Forecast_type == "arps",c(153:224)] <- (arps_row[1,c(2:73)] - actual_row[1,c(2:73)]) / actual_row[1,c(2:73)]
+    frame[frame$Forecast_type == "ml",c(153:224)] <- (ml_row[1,c(2:73)] - actual_row[1,c(2:73)]) / actual_row[1,c(2:73)]
+    
+    
+    # from col 225 till 229 -> year error
+    if (!anyNA(arps_row[1,c(13:24)])) {
+      
+      frame[frame$Forecast_type == "arps",225] <- mean(as.numeric(arps_row[1,c(14:25)])) - mean(as.numeric(actual_row[1,c(14:25)]))
+      frame[frame$Forecast_type == "ml",225] <- mean(as.numeric(ml_row[1,c(14:25)])) - mean(as.numeric(actual_row[1,c(14:25)]))
+    }
+    
+    if (!anyNA(arps_row[1,c(26:37)])) {
+      frame[frame$Forecast_type == "arps",226] <- mean(as.numeric(arps_row[1,c(26:37)])) - mean(as.numeric(actual_row[1,c(26:37)]))
+      frame[frame$Forecast_type == "ml",226] <- mean(as.numeric(ml_row[1,c(26:37)])) - mean(as.numeric(actual_row[1,c(26:37)]))
+    }
+    
+    if (!anyNA(arps_row[1,c(38:49)])) {
+      frame[frame$Forecast_type == "arps",227] <- mean(as.numeric(arps_row[1,c(38:49)])) - mean(as.numeric(actual_row[1,c(38:49)]))
+      frame[frame$Forecast_type == "ml",227] <- mean(as.numeric(ml_row[1,c(38:49)])) - mean(as.numeric(actual_row[1,c(38:49)]))
+    }
+    
+    if (!anyNA(arps_row[1,c(50:61)])) {
+      frame[frame$Forecast_type == "arps",228] <- mean(as.numeric(arps_row[1,c(50:61)])) - mean(as.numeric(actual_row[1,c(50:61)]))
+      frame[frame$Forecast_type == "ml",228] <- mean(as.numeric(ml_row[1,c(50:61)])) - mean(as.numeric(actual_row[1,c(50:61)]))
+    }
+    
+    if (!anyNA(arps_row[1,c(62:73)])) {
+      frame[frame$Forecast_type == "arps",229] <- mean(as.numeric(arps_row[1,c(62:73)])) - mean(as.numeric(actual_row[1,c(62:73)]))
+      frame[frame$Forecast_type == "ml",229] <- mean(as.numeric(ml_row[1,c(62:73)])) - mean(as.numeric(actual_row[1,c(62:73)]))
+    }
+    
+    # from col 230 till 234 -> year error percent
+    if (!anyNA(arps_row[1,c(13:24)])) {
+      
+      frame[frame$Forecast_type == "arps",230] <- (mean(as.numeric(arps_row[1,c(14:25)]))) - mean(as.numeric(actual_row[1,c(14:25)])) / mean(as.numeric(actual_row[1,c(14:25)]))
+      frame[frame$Forecast_type == "ml",230] <- (mean(as.numeric(ml_row[1,c(14:25)])) - mean(as.numeric(actual_row[1,c(14:25)]))) / mean(as.numeric(actual_row[1,c(14:25)])) 
+    }
+    
+    if (!anyNA(arps_row[1,c(26:37)])) {
+      frame[frame$Forecast_type == "arps",231] <- mean(as.numeric(arps_row[1,c(26:37)])) - mean(as.numeric(actual_row[1,c(26:37)])) / mean(as.numeric(actual_row[1,c(26:37)]))
+      frame[frame$Forecast_type == "ml",231] <- mean(as.numeric(ml_row[1,c(26:37)])) - mean(as.numeric(actual_row[1,c(26:37)])) / mean(as.numeric(actual_row[1,c(26:37)]))
+    }
+    
+    if (!anyNA(arps_row[1,c(38:49)])) {
+      frame[frame$Forecast_type == "arps",232] <- mean(as.numeric(arps_row[1,c(38:49)]) - mean(as.numeric(actual_row[1,c(38:49)]))) / mean(as.numeric(actual_row[1,c(38:49)]))
+      frame[frame$Forecast_type == "ml",232] <- mean(as.numeric(ml_row[1,c(38:49)]) - mean(as.numeric(actual_row[1,c(38:49)]))) / mean(as.numeric(actual_row[1,c(38:49)]))
+    }
+    
+    if (!anyNA(arps_row[1,c(50:61)])) {
+      frame[frame$Forecast_type == "arps",233] <- mean(as.numeric(arps_row[1,c(50:61)]) - mean(as.numeric(actual_row[1,c(50:61)]))) / mean(as.numeric(actual_row[1,c(50:61)]))
+      frame[frame$Forecast_type == "ml",233] <- mean(as.numeric(ml_row[1,c(50:61)]) - mean(as.numeric(actual_row[1,c(50:61)]))) / mean(as.numeric(actual_row[1,c(50:61)]))
+    }
+    
+    if (!anyNA(arps_row[1,c(62:73)])) {
+      frame[frame$Forecast_type == "arps",234] <- mean(as.numeric(arps_row[1,c(62:73)]) - mean(as.numeric(actual_row[1,c(62:73)]))) / mean(as.numeric(actual_row[1,c(62:73)]))
+      frame[frame$Forecast_type == "ml",234] <- mean(as.numeric(ml_row[1,c(62:73)]) - mean(as.numeric(actual_row[1,c(62:73)]))) / mean(as.numeric(actual_row[1,c(62:73)]))
+    }
+    
+    
+    # from col 235 till 239 -> year cum error
+    if (!anyNA(arps_row[1,c(13:24)])) {
+      
+      frame[frame$Forecast_type == "arps",235] <- sum(arps_row[1,c(14:25)]) - sum(actual_row[1,c(14:25)])
+      frame[frame$Forecast_type == "ml",235] <- sum(ml_row[1,c(14:25)]) - sum(actual_row[1,c(14:25)])
+    }
+    
+    if (!anyNA(arps_row[1,c(26:37)])) {
+      frame[frame$Forecast_type == "arps",236] <- sum(arps_row[1,c(26:37)]) - sum(actual_row[1,c(26:37)])
+      frame[frame$Forecast_type == "ml",236] <- sum(ml_row[1,c(26:37)]) - sum(actual_row[1,c(26:37)])
+    }
+    
+    if (!anyNA(arps_row[1,c(38:49)])) {
+      frame[frame$Forecast_type == "arps",237] <- sum(arps_row[1,c(38:49)]) - sum(actual_row[1,c(38:49)])
+      frame[frame$Forecast_type == "ml",237] <- sum(ml_row[1,c(38:49)]) - sum(actual_row[1,c(38:49)])
+    }
+    
+    if (!anyNA(arps_row[1,c(50:61)])) {
+      frame[frame$Forecast_type == "arps",238] <- sum(arps_row[1,c(50:61)]) - sum(actual_row[1,c(50:61)])
+      frame[frame$Forecast_type == "ml",238] <- sum(ml_row[1,c(50:61)]) - sum(actual_row[1,c(50:61)])
+    }
+    
+    if (!anyNA(arps_row[1,c(62:73)])) {
+      frame[frame$Forecast_type == "arps",239] <- sum(arps_row[1,c(62:73)]) - sum(actual_row[1,c(62:73)])
+      frame[frame$Forecast_type == "ml",239] <- sum(ml_row[1,c(62:73)]) - sum(actual_row[1,c(62:73)])
+    }
+    
+    # from col 241 till 244 -> year cum error percent
+    if (!anyNA(arps_row[1,c(13:24)])) {
+      
+      frame[frame$Forecast_type == "arps",240] <- ((sum(arps_row[1,c(14:25)]) - sum(actual_row[1,c(14:25)])) / sum(actual_row[1,c(14:25)])) 
+      frame[frame$Forecast_type == "ml",240] <- ((sum(ml_row[1,c(14:25)]) - sum(actual_row[1,c(14:25)])) / sum(actual_row[1,c(14:25)])) 
+    }
+    
+    if (!anyNA(arps_row[1,c(26:37)])) {
+      frame[frame$Forecast_type == "arps",241] <- (sum(arps_row[1,c(26:37)]) - sum(actual_row[1,c(26:37)])) / sum(actual_row[1,c(26:37)])
+      frame[frame$Forecast_type == "ml",241] <- (sum(ml_row[1,c(26:37)]) - sum(actual_row[1,c(26:37)])) / sum(actual_row[1,c(26:37)])
+    }
+    
+    if (!anyNA(arps_row[1,c(38:49)])) {
+      frame[frame$Forecast_type == "arps",242] <- (sum(arps_row[1,c(38:49)]) - sum(actual_row[1,c(38:49)])) / sum(actual_row[1,c(38:49)])
+      frame[frame$Forecast_type == "ml",242] <- (sum(ml_row[1,c(38:49)]) - sum(actual_row[1,c(38:49)])) / sum(actual_row[1,c(38:49)])
+    }
+    
+    if (!anyNA(arps_row[1,c(50:61)])) {
+      frame[frame$Forecast_type == "arps",243] <- (sum(arps_row[1,c(50:61)]) - sum(actual_row[1,c(50:61)])) / sum(actual_row[1,c(50:61)])
+      frame[frame$Forecast_type == "ml",243] <- (sum(ml_row[1,c(50:61)]) - sum(actual_row[1,c(50:61)])) / sum(actual_row[1,c(50:61)])
+    }
+    
+    if (!anyNA(arps_row[1,c(62:73)])) {
+      frame[frame$Forecast_type == "arps",244] <- (sum(arps_row[1,c(62:73)]) - sum(actual_row[1,c(62:73)])) / sum(actual_row[1,c(62:73)])
+      frame[frame$Forecast_type == "ml",244] <- (sum(ml_row[1,c(62:73)]) - sum(actual_row[1,c(62:73)])) / sum(actual_row[1,c(62:73)])
+      
+    }
+    
+    
+    bigframe <- rbind(bigframe, frame)
+    
+  }
+  
+
+}
+
+fillGasError <- function(sheet_all) {
+  
+  #month
+  monthseq <- seq(1, 72, by = 1)
+  
+  for (i in monthseq) {
+    
+    actualcolumnname <- paste0("gas_month_", eval(i), "_error")
+    
+    sheet_all[i, actualcolumnname] <- NA
+  }
+  
+  #month%
+  monthseq <- seq(1, 72, by = 1)
+  
+  for (i in monthseq) {
+    
+    actualcolumnname <- paste0("gas_month_", eval(i), "_error_percent")
+    
+    sheet_all[i, actualcolumnname] <- NA
+  }
+  
+  #year
+  yearseq <- seq(1, 5, by = 1)
+  
+  for (i in yearseq) {
+    
+    actualcolumnname <- paste0("gas_year_", eval(i), "_error")
+    
+    sheet_all[i, actualcolumnname] <- NA
+  }
+  
+  #year percent
+  yearseq <- seq(1, 5, by = 1)
+  
+  for (i in yearseq) {
+    
+    actualcolumnname <- paste0("gas_year_", eval(i), "_error_percent")
+    
+    sheet_all[i, actualcolumnname] <- NA
+  }
+  
+  #year cum
+  yearseq <- seq(1, 5, by = 1)
+  
+  for (i in yearseq) {
+    
+    actualcolumnname <- paste0("gas_year_", eval(i), "_cum_error")
+    
+    sheet_all[i, actualcolumnname] <- NA
+  }
+  
+  #year cum percent
+  yearseq <- seq(1, 5, by = 1)
+  
+  for (i in yearseq) {
+    
+    actualcolumnname <- paste0("gas_year_", eval(i), "_cum_error_percent")
+    
+    sheet_all[i, actualcolumnname] <- NA
+  }
+  
+  
+  sheetList <- split(sheet_all, as.factor(sheet_all$API))
+  listseq <- seq(1, length(sheetList), by = 1)
+  
+  bigframe <- data.frame()
+  
+  for (i in listseq) {
+    
+    API <- names(sheetList)[i]
+    
+    #from col 2 till col 73
+    actual_row <- sheetList[[API]] %>% dplyr::filter(Forecast_type == "actual")
+    arps_row <- sheetList[[API]] %>% dplyr::filter(Forecast_type == "arps")
+    ml_row <- sheetList[[API]] %>% dplyr::filter(Forecast_type == "ml")
+    
+    
+    #from col 81 till col 152 -> error
+    frame <- sheetList[[API]]
+    frame[frame$Forecast_type == "arps",c(81:152)] <- arps_row[1,c(2:73)] - actual_row[1,c(2:73)]
+    frame[frame$Forecast_type == "ml",c(81:152)] <- ml_row[1,c(2:73)] - actual_row[1,c(2:73)]
+    
+    
+    
+    #from col 153 till 224 -> error percent
+    frame[frame$Forecast_type == "arps",c(153:224)] <- (arps_row[1,c(2:73)] - actual_row[1,c(2:73)]) / actual_row[1,c(2:73)]
+    frame[frame$Forecast_type == "ml",c(153:224)] <- (ml_row[1,c(2:73)] - actual_row[1,c(2:73)]) / actual_row[1,c(2:73)]
+    
+    
+    # from col 225 till 229 -> year error
+    if (!anyNA(arps_row[1,c(13:24)])) {
+      
+      frame[frame$Forecast_type == "arps",225] <- mean(as.numeric(arps_row[1,c(14:25)])) - mean(as.numeric(actual_row[1,c(14:25)]))
+      frame[frame$Forecast_type == "ml",225] <- mean(as.numeric(ml_row[1,c(14:25)])) - mean(as.numeric(actual_row[1,c(14:25)]))
+    }
+    
+    if (!anyNA(arps_row[1,c(26:37)])) {
+      frame[frame$Forecast_type == "arps",226] <- mean(as.numeric(arps_row[1,c(26:37)])) - mean(as.numeric(actual_row[1,c(26:37)]))
+      frame[frame$Forecast_type == "ml",226] <- mean(as.numeric(ml_row[1,c(26:37)])) - mean(as.numeric(actual_row[1,c(26:37)]))
+    }
+    
+    if (!anyNA(arps_row[1,c(38:49)])) {
+      frame[frame$Forecast_type == "arps",227] <- mean(as.numeric(arps_row[1,c(38:49)])) - mean(as.numeric(actual_row[1,c(38:49)]))
+      frame[frame$Forecast_type == "ml",227] <- mean(as.numeric(ml_row[1,c(38:49)])) - mean(as.numeric(actual_row[1,c(38:49)]))
+    }
+    
+    if (!anyNA(arps_row[1,c(50:61)])) {
+      frame[frame$Forecast_type == "arps",228] <- mean(as.numeric(arps_row[1,c(50:61)])) - mean(as.numeric(actual_row[1,c(50:61)]))
+      frame[frame$Forecast_type == "ml",228] <- mean(as.numeric(ml_row[1,c(50:61)])) - mean(as.numeric(actual_row[1,c(50:61)]))
+    }
+    
+    if (!anyNA(arps_row[1,c(62:73)])) {
+      frame[frame$Forecast_type == "arps",229] <- mean(as.numeric(arps_row[1,c(62:73)])) - mean(as.numeric(actual_row[1,c(62:73)]))
+      frame[frame$Forecast_type == "ml",229] <- mean(as.numeric(ml_row[1,c(62:73)])) - mean(as.numeric(actual_row[1,c(62:73)]))
+    }
+    
+    # from col 230 till 234 -> year error percent
+    if (!anyNA(arps_row[1,c(13:24)])) {
+      
+      frame[frame$Forecast_type == "arps",230] <- (mean(as.numeric(arps_row[1,c(14:25)]))) - mean(as.numeric(actual_row[1,c(14:25)])) / mean(as.numeric(actual_row[1,c(14:25)]))
+      frame[frame$Forecast_type == "ml",230] <- (mean(as.numeric(ml_row[1,c(14:25)])) - mean(as.numeric(actual_row[1,c(14:25)]))) / mean(as.numeric(actual_row[1,c(14:25)])) 
+    }
+    
+    if (!anyNA(arps_row[1,c(26:37)])) {
+      frame[frame$Forecast_type == "arps",231] <- mean(as.numeric(arps_row[1,c(26:37)])) - mean(as.numeric(actual_row[1,c(26:37)])) / mean(as.numeric(actual_row[1,c(26:37)]))
+      frame[frame$Forecast_type == "ml",231] <- mean(as.numeric(ml_row[1,c(26:37)])) - mean(as.numeric(actual_row[1,c(26:37)])) / mean(as.numeric(actual_row[1,c(26:37)]))
+    }
+    
+    if (!anyNA(arps_row[1,c(38:49)])) {
+      frame[frame$Forecast_type == "arps",232] <- mean(as.numeric(arps_row[1,c(38:49)]) - mean(as.numeric(actual_row[1,c(38:49)]))) / mean(as.numeric(actual_row[1,c(38:49)]))
+      frame[frame$Forecast_type == "ml",232] <- mean(as.numeric(ml_row[1,c(38:49)]) - mean(as.numeric(actual_row[1,c(38:49)]))) / mean(as.numeric(actual_row[1,c(38:49)]))
+    }
+    
+    if (!anyNA(arps_row[1,c(50:61)])) {
+      frame[frame$Forecast_type == "arps",233] <- mean(as.numeric(arps_row[1,c(50:61)]) - mean(as.numeric(actual_row[1,c(50:61)]))) / mean(as.numeric(actual_row[1,c(50:61)]))
+      frame[frame$Forecast_type == "ml",233] <- mean(as.numeric(ml_row[1,c(50:61)]) - mean(as.numeric(actual_row[1,c(50:61)]))) / mean(as.numeric(actual_row[1,c(50:61)]))
+    }
+    
+    if (!anyNA(arps_row[1,c(62:73)])) {
+      frame[frame$Forecast_type == "arps",234] <- mean(as.numeric(arps_row[1,c(62:73)]) - mean(as.numeric(actual_row[1,c(62:73)]))) / mean(as.numeric(actual_row[1,c(62:73)]))
+      frame[frame$Forecast_type == "ml",234] <- mean(as.numeric(ml_row[1,c(62:73)]) - mean(as.numeric(actual_row[1,c(62:73)]))) / mean(as.numeric(actual_row[1,c(62:73)]))
+    }
+    
+    
+    # from col 235 till 239 -> year cum error
+    if (!anyNA(arps_row[1,c(13:24)])) {
+      
+      frame[frame$Forecast_type == "arps",235] <- sum(arps_row[1,c(14:25)]) - sum(actual_row[1,c(14:25)])
+      frame[frame$Forecast_type == "ml",235] <- sum(ml_row[1,c(14:25)]) - sum(actual_row[1,c(14:25)])
+    }
+    
+    if (!anyNA(arps_row[1,c(26:37)])) {
+      frame[frame$Forecast_type == "arps",236] <- sum(arps_row[1,c(26:37)]) - sum(actual_row[1,c(26:37)])
+      frame[frame$Forecast_type == "ml",236] <- sum(ml_row[1,c(26:37)]) - sum(actual_row[1,c(26:37)])
+    }
+    
+    if (!anyNA(arps_row[1,c(38:49)])) {
+      frame[frame$Forecast_type == "arps",237] <- sum(arps_row[1,c(38:49)]) - sum(actual_row[1,c(38:49)])
+      frame[frame$Forecast_type == "ml",237] <- sum(ml_row[1,c(38:49)]) - sum(actual_row[1,c(38:49)])
+    }
+    
+    if (!anyNA(arps_row[1,c(50:61)])) {
+      frame[frame$Forecast_type == "arps",238] <- sum(arps_row[1,c(50:61)]) - sum(actual_row[1,c(50:61)])
+      frame[frame$Forecast_type == "ml",238] <- sum(ml_row[1,c(50:61)]) - sum(actual_row[1,c(50:61)])
+    }
+    
+    if (!anyNA(arps_row[1,c(62:73)])) {
+      frame[frame$Forecast_type == "arps",239] <- sum(arps_row[1,c(62:73)]) - sum(actual_row[1,c(62:73)])
+      frame[frame$Forecast_type == "ml",239] <- sum(ml_row[1,c(62:73)]) - sum(actual_row[1,c(62:73)])
+    }
+    
+    # from col 241 till 244 -> year cum error percent
+    if (!anyNA(arps_row[1,c(13:24)])) {
+      
+      frame[frame$Forecast_type == "arps",240] <- ((sum(arps_row[1,c(14:25)]) - sum(actual_row[1,c(14:25)])) / sum(actual_row[1,c(14:25)])) 
+      frame[frame$Forecast_type == "ml",240] <- ((sum(ml_row[1,c(14:25)]) - sum(actual_row[1,c(14:25)])) / sum(actual_row[1,c(14:25)])) 
+    }
+    
+    if (!anyNA(arps_row[1,c(26:37)])) {
+      frame[frame$Forecast_type == "arps",241] <- (sum(arps_row[1,c(26:37)]) - sum(actual_row[1,c(26:37)])) / sum(actual_row[1,c(26:37)])
+      frame[frame$Forecast_type == "ml",241] <- (sum(ml_row[1,c(26:37)]) - sum(actual_row[1,c(26:37)])) / sum(actual_row[1,c(26:37)])
+    }
+    
+    if (!anyNA(arps_row[1,c(38:49)])) {
+      frame[frame$Forecast_type == "arps",242] <- (sum(arps_row[1,c(38:49)]) - sum(actual_row[1,c(38:49)])) / sum(actual_row[1,c(38:49)])
+      frame[frame$Forecast_type == "ml",242] <- (sum(ml_row[1,c(38:49)]) - sum(actual_row[1,c(38:49)])) / sum(actual_row[1,c(38:49)])
+    }
+    
+    if (!anyNA(arps_row[1,c(50:61)])) {
+      frame[frame$Forecast_type == "arps",243] <- (sum(arps_row[1,c(50:61)]) - sum(actual_row[1,c(50:61)])) / sum(actual_row[1,c(50:61)])
+      frame[frame$Forecast_type == "ml",243] <- (sum(ml_row[1,c(50:61)]) - sum(actual_row[1,c(50:61)])) / sum(actual_row[1,c(50:61)])
+    }
+    
+    if (!anyNA(arps_row[1,c(62:73)])) {
+      frame[frame$Forecast_type == "arps",244] <- (sum(arps_row[1,c(62:73)]) - sum(actual_row[1,c(62:73)])) / sum(actual_row[1,c(62:73)])
+      frame[frame$Forecast_type == "ml",244] <- (sum(ml_row[1,c(62:73)]) - sum(actual_row[1,c(62:73)])) / sum(actual_row[1,c(62:73)])
+      
+    }
+    
+    
+    bigframe <- rbind(bigframe, frame)
+    
+  }
+  
+  
+}
+
+
+# getErrors <- function(actual, fitted) {
+#   error <- NULL
+#   relative.error <- NULL
+#   year.errors <- NULL
+#   year.re <- NULL
+#   for(year in 1:5) {
+#     counter <- 0
+#     err <- 0
+#     re <- 0
+#     discount.factor <- 1/(1.1 ^ year)
+#     for(month in 1:12) {
+#       iterator <- (year - 1) * 12 + month
+#       if(is.na(actual[iterator])) {
+#         error <- c(error, "NULL")
+#         relative.error <- c(relative.error, "NULL")
+#       } else {
+#         if(actual[iterator] == 0) {
+#           error <- c(error, fitted[iterator] * discount.factor)
+#           relative.error <- c(relative.error, fitted[iterator] * discount.factor)
+#         } else {
+#           error <- c(error, (fitted[iterator] - actual[iterator]) * discount.factor)
+#           relative.error <- c(relative.error, ((fitted[iterator] - actual[iterator]) / actual[iterator]) * discount.factor)
+#           counter <- counter + 1
+#           err <- err + ((fitted[iterator] - actual[iterator]) * discount.factor)
+#           re <- re + (((fitted[iterator] - actual[iterator]) / actual[iterator]) * discount.factor)
+#         }}
+#     }
+#     if(counter >=  3 & err != 0 & re != 0) {
+#       year.errors <- c(year.errors, err)
+#       year.re <- c(year.re, re)
+#     } else {
+#       year.errors <- c(year.errors, "NULL")
+#       year.re <- c(year.re, "NULL")
+#       
+#     }
+#     }
+#   
+#   return(list("month.error"= error, "month.percentage"= relative.error, "year.error"= year.errors, "year.percentage"= year.re))
 # }
+
 

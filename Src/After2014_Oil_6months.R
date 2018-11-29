@@ -92,6 +92,8 @@ sheet_ml <- fillOilSheet_mlprod(neighborsPool_after2014_oil, final_after2014_oil
 
 sheet_all <- fillOilSheet(sheet_ml, newdataset_after2014_oil, final_after2014_oil_test, 6, neighborsPool_after2014_oil)
 
+sheet_final <- fillOilError(sheet_all)
+
 # 100 * (1 - mean(abs(final_after2014_oil_test$predicted_qi - final_after2014_oil_test$my_qi) / final_after2014_oil_test$my_qi))
 # 100 * (1 - mean(abs(final_after2014_oil_test$predicted_di - final_after2014_oil_test$my_di) / final_after2014_oil_test$my_di))
 

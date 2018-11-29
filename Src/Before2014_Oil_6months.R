@@ -88,6 +88,6 @@ sheet_arps <- fillOilSheet_arpsprod(neighborsPool_before2014_oil, final_before20
 sheet_ml <- fillOilSheet_mlprod(neighborsPool_before2014_oil, final_before2014_oil_test, sheet_arps)
 
 sheet_all <- fillOilSheet(sheet_ml, newdataset_before2014_oil, final_before2014_oil_test, 6, neighborsPool_before2014_oil)
-
+sheet_final <- fillOilError(sheet_all)
 # 100 * (1 - mean(abs(final_before2014_oil_test$predicted_qi - final_before2014_oil_test$my_qi) / final_before2014_oil_test$my_qi))
 # 100 * (1 - mean(abs(final_before2014_oil_test$predicted_di - final_before2014_oil_test$my_di) / final_before2014_oil_test$my_di))
