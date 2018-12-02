@@ -1,10 +1,4 @@
 #Experiment1: 
-newdataset_before2014_gas <- read.csv("newdataset_before2014_gas.CSV")
-newdataset_before2014_gas$API <- sprintf("%1.f", newdataset_before2014_gas$API)
-newdataset_before2014_gas$API <- ifelse(startsWith(newdataset_before2014_gas$API, "5"),
-                                           paste("0", as.character(newdataset_before2014_gas$API), sep = ""),
-                                           as.character(newdataset_before2014_gas$API))
-
 
 final_before2014_gas <- newdataset_before2014_gas
 
@@ -51,8 +45,6 @@ final_before2014_gas <- final_before2014_gas %>% dplyr::select(API,
                                                                my_qi,
                                                                my_di)
 
-
-final_before2014_gas[final_before2014_gas == Inf] <- NA
 final_before2014_gas <- final_before2014_gas[complete.cases(final_before2014_gas),]
 
 # set.seed(5)
@@ -88,22 +80,4 @@ di_model <-
                 preProcess = c("center", "scale"),
                 tuneGrid = NULL,
                 trControl = trainControl(method="cv", number=10))
-
-final_before2014_gas_test$predicted_qi <- predict(qi_model, final_before2014_gas_test)
-final_before2014_gas_test$predicted_di <- predict(di_model, final_before2014_gas_test)
-
-final_before2014_gas_test <- inner_join(final_before2014_gas_test, newdataset_before2014_gas[, c("API", "my_b")], by = "API")
-
-sheet_gas <- fillGasSheet_actualprod(neighborsPool_before2014_gas, final_before2014_gas_test)
-sheet_arps <- fillGasSheet_arpsprod(neighborsPool_before2014_gas, final_before2014_gas_test, sheet_gas, 6)
-sheet_ml <- fillGasSheet_mlprod(neighborsPool_before2014_gas, final_before2014_gas_test, sheet_arps)
-
-
-sheet_all <- fillGasSheet(sheet_ml, newdataset_before2014_gas, final_before2014_gas_test, 6, neighborsPool_before2014_gas)
-
-sheet_final <- fillGasError(sheet_all)
-
-
-sheet_final$FORECAST_NAME <- 6
-write.csv(sheet_final, "sheet_final_before2014_gas_6.CSV", row.names = FALSE)
 

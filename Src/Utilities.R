@@ -2067,7 +2067,8 @@ fillGasError <- function(sheet_all) {
     frame[frame$Forecast_type == "arps",c(which(colnames(frame) == "gas_month_1_error_percent"):which(colnames(frame) == "gas_month_60_error_percent"))] <- 
       (arps_row[1,c(which(colnames(frame) == "gas_month_1"):which(colnames(frame) == "gas_month_60"))] - actual_row[1,c(which(colnames(frame) == "gas_month_1"):which(colnames(frame) == "gas_month_60"))]) / actual_row[1,c(which(colnames(frame) == "gas_month_1"):which(colnames(frame) == "gas_month_60"))]
     
-    frame[frame$Forecast_type == "ml",c(which(colnames(frame) == "gas_month_1_error_percent"):which(colnames(frame) == "gas_month_60_error_percent"))] <- (ml_row[1,c(which(colnames(frame) == "gas_month_1"):which(colnames(frame) == "gas_month_60"))] - actual_row[1,c(which(colnames(frame) == "gas_month_1"):which(colnames(frame) == "gas_month_60"))]) / actual_row[1,c(which(colnames(frame) == "gas_month_1"):which(colnames(frame) == "gas_month_60"))]
+    frame[frame$Forecast_type == "ml",c(which(colnames(frame) == "gas_month_1_error_percent"):which(colnames(frame) == "gas_month_60_error_percent"))] <- 
+      (ml_row[1,c(which(colnames(frame) == "gas_month_1"):which(colnames(frame) == "gas_month_60"))] - actual_row[1,c(which(colnames(frame) == "gas_month_1"):which(colnames(frame) == "gas_month_60"))]) / actual_row[1,c(which(colnames(frame) == "gas_month_1"):which(colnames(frame) == "gas_month_60"))]
     
     
     # from col 235 till 239 -> year cum error
@@ -2075,24 +2076,24 @@ fillGasError <- function(sheet_all) {
     
     if (sum(is.na(arps_row[1,c(which(colnames(frame) == "gas_month_1"):which(colnames(frame) == "gas_month_12"))])) <= 3) {
       
-      frame[frame$Forecast_type == "arps","gas_year_1_cum_error"] <- sum(arps_row[1,c(which(colnames(frame) == "gas_month_1_error"):which(colnames(frame) == "gas_month_12_error"))]) - sum(actual_row[1,c(which(colnames(frame) == "gas_month_1_error"):which(colnames(frame) == "gas_month_12_error"))])
-      frame[frame$Forecast_type == "ml","gas_year_1_cum_error"] <- sum(ml_row[1,c(which(colnames(frame) == "gas_month_1_error"):which(colnames(frame) == "gas_month_12_error"))]) - sum(actual_row[1,c(which(colnames(frame) == "gas_month_1_error"):which(colnames(frame) == "gas_month_12_error"))])
+      frame[frame$Forecast_type == "arps","gas_year_1_cum_error"] <- sum(arps_row[1,c(which(colnames(frame) == "gas_month_1"):which(colnames(frame) == "gas_month_12"))]) - sum(actual_row[1,c(which(colnames(frame) == "gas_month_1"):which(colnames(frame) == "gas_month_12"))])
+      frame[frame$Forecast_type == "ml","gas_year_1_cum_error"] <- sum(ml_row[1,c(which(colnames(frame) == "gas_month_1"):which(colnames(frame) == "gas_month_12"))]) - sum(actual_row[1,c(which(colnames(frame) == "gas_month_1"):which(colnames(frame) == "gas_month_12"))])
       
-      frame[frame$Forecast_type == "arps","gas_year_1_cum_error_percent"] <- (sum(arps_row[1,c(which(colnames(frame) == "gas_month_1_error"):which(colnames(frame) == "gas_month_12_error"))]) - sum(actual_row[1,c(which(colnames(frame) == "gas_month_1_error"):which(colnames(frame) == "gas_month_12_error"))])) / sum(actual_row[1,c(which(colnames(frame) == "gas_month_1_error"):which(colnames(frame) == "gas_month_12_error"))])
+      frame[frame$Forecast_type == "arps","gas_year_1_cum_error_percent"] <- (sum(arps_row[1,c(which(colnames(frame) == "gas_month_1"):which(colnames(frame) == "gas_month_12"))]) - sum(actual_row[1,c(which(colnames(frame) == "gas_month_1"):which(colnames(frame) == "gas_month_12"))])) / sum(actual_row[1,c(which(colnames(frame) == "gas_month_1"):which(colnames(frame) == "gas_month_12"))])
       
-      frame[frame$Forecast_type == "ml","gas_year_1_cum_error_percent"] <- (sum(ml_row[1,c(which(colnames(frame) == "gas_month_1_error"):which(colnames(frame) == "gas_month_12_error"))]) - sum(actual_row[1,c(which(colnames(frame) == "gas_month_1_error"):which(colnames(frame) == "gas_month_12_error"))])) / sum(actual_row[1,c(which(colnames(frame) == "gas_month_1_error"):which(colnames(frame) == "gas_month_12_error"))]) 
+      frame[frame$Forecast_type == "ml","gas_year_1_cum_error_percent"] <- (sum(ml_row[1,c(which(colnames(frame) == "gas_month_1"):which(colnames(frame) == "gas_month_12"))]) - sum(actual_row[1,c(which(colnames(frame) == "gas_month_1"):which(colnames(frame) == "gas_month_12"))])) / sum(actual_row[1,c(which(colnames(frame) == "gas_month_1"):which(colnames(frame) == "gas_month_12"))]) 
       
     }
     #year 2
     if (sum(is.na(arps_row[1,c(which(colnames(frame) == "gas_month_1"):which(colnames(frame) == "gas_month_12"))])) <= 3 &
         sum(is.na(arps_row[1,c(which(colnames(frame) == "gas_month_13"):which(colnames(frame) == "gas_month_24"))])) <= 3) {
       
-      frame[frame$Forecast_type == "arps","gas_year_2_cum_error"] <- sum(arps_row[1,c(which(colnames(frame) == "gas_month_1_error"):which(colnames(frame) == "gas_month_24_error"))]) - sum(actual_row[1,c(which(colnames(frame) == "gas_month_1_error"):which(colnames(frame) == "gas_month_24_error"))])
-      frame[frame$Forecast_type == "ml","gas_year_2_cum_error"] <- sum(ml_row[1,c(which(colnames(frame) == "gas_month_1_error"):which(colnames(frame) == "gas_month_24_error"))]) - sum(actual_row[1,c(which(colnames(frame) == "gas_month_1_error"):which(colnames(frame) == "gas_month_24_error"))])
+      frame[frame$Forecast_type == "arps","gas_year_2_cum_error"] <- sum(arps_row[1,c(which(colnames(frame) == "gas_month_1"):which(colnames(frame) == "gas_month_24"))]) - sum(actual_row[1,c(which(colnames(frame) == "gas_month_1"):which(colnames(frame) == "gas_month_24"))])
+      frame[frame$Forecast_type == "ml","gas_year_2_cum_error"] <- sum(ml_row[1,c(which(colnames(frame) == "gas_month_1"):which(colnames(frame) == "gas_month_24"))]) - sum(actual_row[1,c(which(colnames(frame) == "gas_month_1"):which(colnames(frame) == "gas_month_24"))])
       
-      frame[frame$Forecast_type == "arps","gas_year_2_cum_error_percent"] <- (sum(arps_row[1,c(which(colnames(frame) == "gas_month_1_error"):which(colnames(frame) == "gas_month_24_error"))]) - sum(actual_row[1,c(which(colnames(frame) == "gas_month_1_error"):which(colnames(frame) == "gas_month_24_error"))])) / sum(actual_row[1,c(which(colnames(frame) == "gas_month_1_error"):which(colnames(frame) == "gas_month_24_error"))])
+      frame[frame$Forecast_type == "arps","gas_year_2_cum_error_percent"] <- (sum(arps_row[1,c(which(colnames(frame) == "gas_month_1"):which(colnames(frame) == "gas_month_24"))]) - sum(actual_row[1,c(which(colnames(frame) == "gas_month_1"):which(colnames(frame) == "gas_month_24"))])) / sum(actual_row[1,c(which(colnames(frame) == "gas_month_1"):which(colnames(frame) == "gas_month_24"))])
       
-      frame[frame$Forecast_type == "ml","gas_year_2_cum_error_percent"] <- (sum(ml_row[1,c(which(colnames(frame) == "gas_month_1_error"):which(colnames(frame) == "gas_month_24_error"))]) - sum(actual_row[1,c(which(colnames(frame) == "gas_month_1_error"):which(colnames(frame) == "gas_month_24_error"))])) / sum(actual_row[1,c(which(colnames(frame) == "gas_month_1_error"):which(colnames(frame) == "gas_month_24_error"))]) 
+      frame[frame$Forecast_type == "ml","gas_year_2_cum_error_percent"] <- (sum(ml_row[1,c(which(colnames(frame) == "gas_month_1"):which(colnames(frame) == "gas_month_24"))]) - sum(actual_row[1,c(which(colnames(frame) == "gas_month_1"):which(colnames(frame) == "gas_month_24"))])) / sum(actual_row[1,c(which(colnames(frame) == "gas_month_1"):which(colnames(frame) == "gas_month_24"))]) 
       
     } 
     #year 3
@@ -2100,12 +2101,12 @@ fillGasError <- function(sheet_all) {
         sum(is.na(arps_row[1,c(which(colnames(frame) == "gas_month_13"):which(colnames(frame) == "gas_month_24"))])) <= 3 &
         sum(is.na(arps_row[1,c(which(colnames(frame) == "gas_month_25"):which(colnames(frame) == "gas_month_36"))]))) {
       
-      frame[frame$Forecast_type == "arps","gas_year_3_cum_error"] <- sum(arps_row[1,c(which(colnames(frame) == "gas_month_1_error"):which(colnames(frame) == "gas_month_36_error"))]) - sum(actual_row[1,c(which(colnames(frame) == "gas_month_1_error"):which(colnames(frame) == "gas_month_36_error"))])
-      frame[frame$Forecast_type == "ml","gas_year_3_cum_error"] <- sum(ml_row[1,c(which(colnames(frame) == "gas_month_1_error"):which(colnames(frame) == "gas_month_36_error"))]) - sum(actual_row[1,c(which(colnames(frame) == "gas_month_1_error"):which(colnames(frame) == "gas_month_36_error"))])
+      frame[frame$Forecast_type == "arps","gas_year_3_cum_error"] <- sum(arps_row[1,c(which(colnames(frame) == "gas_month_1"):which(colnames(frame) == "gas_month_36"))]) - sum(actual_row[1,c(which(colnames(frame) == "gas_month_1"):which(colnames(frame) == "gas_month_36"))])
+      frame[frame$Forecast_type == "ml","gas_year_3_cum_error"] <- sum(ml_row[1,c(which(colnames(frame) == "gas_month_1"):which(colnames(frame) == "gas_month_36"))]) - sum(actual_row[1,c(which(colnames(frame) == "gas_month_1"):which(colnames(frame) == "gas_month_36"))])
       
-      frame[frame$Forecast_type == "arps","gas_year_3_cum_error_percent"] <- (sum(arps_row[1,c(which(colnames(frame) == "gas_month_1_error"):which(colnames(frame) == "gas_month_36_error"))]) - sum(actual_row[1,c(which(colnames(frame) == "gas_month_1_error"):which(colnames(frame) == "gas_month_36_error"))])) / sum(actual_row[1,c(which(colnames(frame) == "gas_month_1_error"):which(colnames(frame) == "gas_month_36_error"))])
+      frame[frame$Forecast_type == "arps","gas_year_3_cum_error_percent"] <- (sum(arps_row[1,c(which(colnames(frame) == "gas_month_1"):which(colnames(frame) == "gas_month_36"))]) - sum(actual_row[1,c(which(colnames(frame) == "gas_month_1"):which(colnames(frame) == "gas_month_36"))])) / sum(actual_row[1,c(which(colnames(frame) == "gas_month_1"):which(colnames(frame) == "gas_month_36"))])
       
-      frame[frame$Forecast_type == "ml","gas_year_3_cum_error_percent"] <- (sum(ml_row[1,c(which(colnames(frame) == "gas_month_1_error"):which(colnames(frame) == "gas_month_36_error"))]) - sum(actual_row[1,c(which(colnames(frame) == "gas_month_1_error"):which(colnames(frame) == "gas_month_36_error"))])) / sum(actual_row[1,c(which(colnames(frame) == "gas_month_1_error"):which(colnames(frame) == "gas_month_36_error"))]) 
+      frame[frame$Forecast_type == "ml","gas_year_3_cum_error_percent"] <- (sum(ml_row[1,c(which(colnames(frame) == "gas_month_1"):which(colnames(frame) == "gas_month_36"))]) - sum(actual_row[1,c(which(colnames(frame) == "gas_month_1"):which(colnames(frame) == "gas_month_36"))])) / sum(actual_row[1,c(which(colnames(frame) == "gas_month_1"):which(colnames(frame) == "gas_month_36"))]) 
       
     }
     #year 4
@@ -2114,12 +2115,12 @@ fillGasError <- function(sheet_all) {
         sum(is.na(arps_row[1,c(which(colnames(frame) == "gas_month_25"):which(colnames(frame) == "gas_month_36"))])) <= 3 &
         sum(is.na(arps_row[1,c(which(colnames(frame) == "gas_month_37"):which(colnames(frame) == "gas_month_48"))])) <= 3) {
       
-      frame[frame$Forecast_type == "arps","gas_year_4_cum_error"] <- sum(arps_row[1,c(which(colnames(frame) == "gas_month_1_error"):which(colnames(frame) == "gas_month_48_error"))]) - sum(actual_row[1,c(which(colnames(frame) == "gas_month_1_error"):which(colnames(frame) == "gas_month_48_error"))])
-      frame[frame$Forecast_type == "ml","gas_year_4_cum_error"] <- sum(ml_row[1,c(which(colnames(frame) == "gas_month_1_error"):which(colnames(frame) == "gas_month_48_error"))]) - sum(actual_row[1,c(which(colnames(frame) == "gas_month_1_error"):which(colnames(frame) == "gas_month_48_error"))])
+      frame[frame$Forecast_type == "arps","gas_year_4_cum_error"] <- sum(arps_row[1,c(which(colnames(frame) == "gas_month_1"):which(colnames(frame) == "gas_month_48"))]) - sum(actual_row[1,c(which(colnames(frame) == "gas_month_1"):which(colnames(frame) == "gas_month_48"))])
+      frame[frame$Forecast_type == "ml","gas_year_4_cum_error"] <- sum(ml_row[1,c(which(colnames(frame) == "gas_month_1"):which(colnames(frame) == "gas_month_48"))]) - sum(actual_row[1,c(which(colnames(frame) == "gas_month_1"):which(colnames(frame) == "gas_month_48"))])
       
-      frame[frame$Forecast_type == "arps","gas_year_4_cum_error_percent"] <- (sum(arps_row[1,c(which(colnames(frame) == "gas_month_1_error"):which(colnames(frame) == "gas_month_48_error"))]) - sum(actual_row[1,c(which(colnames(frame) == "gas_month_1_error"):which(colnames(frame) == "gas_month_48_error"))])) / sum(actual_row[1,c(which(colnames(frame) == "gas_month_1_error"):which(colnames(frame) == "gas_month_48_error"))])
+      frame[frame$Forecast_type == "arps","gas_year_4_cum_error_percent"] <- (sum(arps_row[1,c(which(colnames(frame) == "gas_month_1"):which(colnames(frame) == "gas_month_48"))]) - sum(actual_row[1,c(which(colnames(frame) == "gas_month_1"):which(colnames(frame) == "gas_month_48"))])) / sum(actual_row[1,c(which(colnames(frame) == "gas_month_1"):which(colnames(frame) == "gas_month_48"))])
       
-      frame[frame$Forecast_type == "ml","gas_year_4_cum_error_percent"] <- (sum(ml_row[1,c(which(colnames(frame) == "gas_month_1_error"):which(colnames(frame) == "gas_month_48_error"))]) - sum(actual_row[1,c(which(colnames(frame) == "gas_month_1_error"):which(colnames(frame) == "gas_month_48_error"))])) / sum(actual_row[1,c(which(colnames(frame) == "gas_month_1_error"):which(colnames(frame) == "gas_month_48_error"))]) 
+      frame[frame$Forecast_type == "ml","gas_year_4_cum_error_percent"] <- (sum(ml_row[1,c(which(colnames(frame) == "gas_month_1"):which(colnames(frame) == "gas_month_48"))]) - sum(actual_row[1,c(which(colnames(frame) == "gas_month_1"):which(colnames(frame) == "gas_month_48"))])) / sum(actual_row[1,c(which(colnames(frame) == "gas_month_1"):which(colnames(frame) == "gas_month_48"))]) 
       
     }
     
@@ -2129,12 +2130,12 @@ fillGasError <- function(sheet_all) {
         sum(is.na(arps_row[1,c(which(colnames(frame) == "gas_month_37"):which(colnames(frame) == "gas_month_48"))])) <= 3 &
         sum(is.na(arps_row[1,c(which(colnames(frame) == "gas_month_49"):which(colnames(frame) == "gas_month_60"))])) <= 3) {
       
-      frame[frame$Forecast_type == "arps","gas_year_5_cum_error"] <- sum(arps_row[1,c(which(colnames(frame) == "gas_month_1_error"):which(colnames(frame) == "gas_month_60_error"))]) - sum(actual_row[1,c(which(colnames(frame) == "gas_month_1_error"):which(colnames(frame) == "gas_month_60_error"))])
-      frame[frame$Forecast_type == "ml","gas_year_5_cum_error"] <- sum(ml_row[1,c(which(colnames(frame) == "gas_month_1_error"):which(colnames(frame) == "gas_month_60_error"))]) - sum(actual_row[1,c(which(colnames(frame) == "gas_month_1_error"):which(colnames(frame) == "gas_month_60_error"))])
+      frame[frame$Forecast_type == "arps","gas_year_5_cum_error"] <- sum(arps_row[1,c(which(colnames(frame) == "gas_month_1"):which(colnames(frame) == "gas_month_60"))]) - sum(actual_row[1,c(which(colnames(frame) == "gas_month_1"):which(colnames(frame) == "gas_month_60"))])
+      frame[frame$Forecast_type == "ml","gas_year_5_cum_error"] <- sum(ml_row[1,c(which(colnames(frame) == "gas_month_1"):which(colnames(frame) == "gas_month_60"))]) - sum(actual_row[1,c(which(colnames(frame) == "gas_month_1"):which(colnames(frame) == "gas_month_60"))])
       
-      frame[frame$Forecast_type == "arps","gas_year_5_cum_error_percent"] <- (sum(arps_row[1,c(which(colnames(frame) == "gas_month_1_error"):which(colnames(frame) == "gas_month_60_error"))]) - sum(actual_row[1,c(which(colnames(frame) == "gas_month_1_error"):which(colnames(frame) == "gas_month_60_error"))])) / sum(actual_row[1,c(which(colnames(frame) == "gas_month_1_error"):which(colnames(frame) == "gas_month_60_error"))])
+      frame[frame$Forecast_type == "arps","gas_year_5_cum_error_percent"] <- (sum(arps_row[1,c(which(colnames(frame) == "gas_month_1"):which(colnames(frame) == "gas_month_60"))]) - sum(actual_row[1,c(which(colnames(frame) == "gas_month_1"):which(colnames(frame) == "gas_month_60"))])) / sum(actual_row[1,c(which(colnames(frame) == "gas_month_1"):which(colnames(frame) == "gas_month_60"))])
       
-      frame[frame$Forecast_type == "ml","gas_year_5_cum_error_percent"] <- (sum(ml_row[1,c(which(colnames(frame) == "gas_month_1_error"):which(colnames(frame) == "gas_month_60_error"))]) - sum(actual_row[1,c(which(colnames(frame) == "gas_month_1_error"):which(colnames(frame) == "gas_month_60_error"))])) / sum(actual_row[1,c(which(colnames(frame) == "gas_month_1_error"):which(colnames(frame) == "gas_month_60_error"))]) 
+      frame[frame$Forecast_type == "ml","gas_year_5_cum_error_percent"] <- (sum(ml_row[1,c(which(colnames(frame) == "gas_month_1"):which(colnames(frame) == "gas_month_60"))]) - sum(actual_row[1,c(which(colnames(frame) == "gas_month_1"):which(colnames(frame) == "gas_month_60"))])) / sum(actual_row[1,c(which(colnames(frame) == "gas_month_1"):which(colnames(frame) == "gas_month_60"))]) 
       
     }
     

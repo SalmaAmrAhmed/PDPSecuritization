@@ -1,5 +1,12 @@
 #Experiment1: 
 
+newdataset_after2014_gas <- read.csv("newdataset_after2014_gas.CSV")
+newdataset_after2014_gas$API <- sprintf("%1.f", newdataset_after2014_gas$API)
+newdataset_after2014_gas$API <- ifelse(startsWith(newdataset_after2014_gas$API, "5"),
+                                        paste("0", as.character(newdataset_after2014_gas$API), sep = ""),
+                                        as.character(newdataset_after2014_gas$API))
+
+
 final_after2014_gas <- newdataset_after2014_gas
 
 final_after2014_gas <- final_after2014_gas %>% dplyr::select(API,
@@ -42,6 +49,7 @@ final_after2014_gas <- final_after2014_gas %>% dplyr::select(API,
                                                                my_qi,
                                                                my_di)
 
+final_after2014_gas[final_after2014_gas == Inf] <- NA
 final_after2014_gas <- final_after2014_gas[complete.cases(final_after2014_gas),]
 
 # set.seed(5)
@@ -49,7 +57,7 @@ final_after2014_gas <- final_after2014_gas[complete.cases(final_after2014_gas),]
 # set.seed(5)
 # trainset_indx <- createDataPartition(data.response, p = 0.7, list = FALSE)
 
-API <- read.csv("final_after2014_Oil_test_API.CSV")
+API <- read.csv("final_after2014_test_API.CSV")
 API$API <- sprintf("%1.f", API$API)
 API$API <- ifelse(startsWith(API$API, "5"), paste("0", as.character(API$API), sep = ""), as.character(API$API))
 
@@ -77,4 +85,22 @@ di_model <-
                 preProcess = c("center", "scale"),
                 tuneGrid = NULL,
                 trControl = trainControl(method="cv", number=10))
+
+final_after2014_gas_test$predicted_qi <- predict(qi_model, final_after2014_gas_test)
+final_after2014_gas_test$predicted_di <- predict(di_model, final_after2014_gas_test)
+
+final_after2014_gas_test <- inner_join(final_after2014_gas_test, newdataset_after2014_gas[, c("API", "my_b")], by = "API")
+
+sheet_gas <- fillGasSheet_actualprod(neighborsPool_after2014_gas, final_after2014_gas_test)
+sheet_arps <- fillGasSheet_arpsprod(neighborsPool_after2014_gas, final_after2014_gas_test, sheet_gas, 3)
+sheet_ml <- fillGasSheet_mlprod(neighborsPool_after2014_gas, final_after2014_gas_test, sheet_arps)
+
+
+
+sheet_all <- fillGasSheet(sheet_ml, newdataset_after2014_gas, final_after2014_gas_test, 3, neighborsPool_after2014_gas)
+
+sheet_final <- fillGasError(sheet_all)
+
+sheet_final$FORECAST_NAME <- 3
+write.csv(sheet_final, "sheet_final_after2014_gas_3.CSV", row.names = FALSE)
 

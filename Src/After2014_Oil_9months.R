@@ -48,6 +48,7 @@ final_after2014_oil <- final_after2014_oil %>% dplyr::select(API,
                                                              my_qi,
                                                              my_di)
 
+final_after2014_oil[final_after2014_oil == Inf] <- NA
 final_after2014_oil <- final_after2014_oil[complete.cases(final_after2014_oil),]
 
 # set.seed(5)
@@ -55,11 +56,9 @@ final_after2014_oil <- final_after2014_oil[complete.cases(final_after2014_oil),]
 # set.seed(5)
 # trainset_indx <- createDataPartition(data.response, p = 0.7, list = FALSE)
 
-API <- read.csv("final_after2014_oil_test_API.CSV")
+API <- read.csv("final_after2014_test_API.CSV")
 API$API <- sprintf("%1.f", API$API)
 API$API <- ifelse(startsWith(API$API, "5"), paste("0", as.character(API$API), sep = ""), as.character(API$API))
-
-
 
 
 final_after2014_oil_test <- inner_join(final_after2014_oil, API, by = "API")
@@ -83,4 +82,23 @@ di_model <-
                 preProcess = c("center", "scale"),
                 tuneGrid = NULL,
                 trControl = trainControl(method="cv", number=10))
+
+
+
+final_after2014_oil_test$predicted_qi <- predict(qi_model, final_after2014_oil_test)
+final_after2014_oil_test$predicted_di <- predict(di_model, final_after2014_oil_test)
+
+final_after2014_oil_test <- inner_join(final_after2014_oil_test, newdataset_after2014_oil[, c("API", "my_b")], by = "API")
+
+sheet_oil <- fillOilSheet_actualprod(neighborsPool_after2014_oil, final_after2014_oil_test)
+sheet_arps <- fillOilSheet_arpsprod(neighborsPool_after2014_oil, final_after2014_oil_test, sheet_oil, 9)
+sheet_ml <- fillOilSheet_mlprod(neighborsPool_after2014_oil, final_after2014_oil_test, sheet_arps)
+
+
+sheet_all <- fillOilSheet(sheet_ml, newdataset_after2014_oil, final_after2014_oil_test, 9, neighborsPool_after2014_oil)
+
+sheet_final <- fillOilError(sheet_all)
+
+sheet_final$FORECAST_NAME <- 9
+write.csv(sheet_final, "sheet_final_after2014_oil_9.CSV", row.names = FALSE)
 
