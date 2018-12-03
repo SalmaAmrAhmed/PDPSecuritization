@@ -40,6 +40,6 @@ combineSheets <- function() {
     
     }
   
-    write.csv(sheet_res, paste0(period, ".CSV"))
+    write.csv(sheet_res, paste0(period, ".CSV"), row.names = FALSE)
   }
 }
