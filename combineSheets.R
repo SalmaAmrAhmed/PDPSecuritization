@@ -1,138 +1,45 @@
 
-sheet_final_after2014_gas_3 <- read.csv("sheet_final_after2014_gas_3.CSV")
-sheet_final_after2014_gas_3$API <- sprintf("%1.f", sheet_final_after2014_gas_3$API)
-sheet_final_after2014_gas_3$API <- ifelse(startsWith(sheet_final_after2014_gas_3$API, "5"),
-                                       paste("0", as.character(sheet_final_after2014_gas_3$API), sep = ""),
-                                       as.character(sheet_final_after2014_gas_3$API))
 
-sheet_final_after2014_gas_6 <- read.csv("sheet_final_after2014_gas_6.CSV")
-sheet_final_after2014_gas_6$API <- sprintf("%1.f", sheet_final_after2014_gas_6$API)
-sheet_final_after2014_gas_6$API <- ifelse(startsWith(sheet_final_after2014_gas_6$API, "5"),
-                                          paste("0", as.character(sheet_final_after2014_gas_6$API), sep = ""),
-                                          as.character(sheet_final_after2014_gas_6$API))
-
-sheet_final_after2014_gas_9 <- read.csv("sheet_final_after2014_gas_9.CSV")
-sheet_final_after2014_gas_9$API <- sprintf("%1.f", sheet_final_after2014_gas_9$API)
-sheet_final_after2014_gas_9$API <- ifelse(startsWith(sheet_final_after2014_gas_9$API, "5"),
-                                          paste("0", as.character(sheet_final_after2014_gas_9$API), sep = ""),
-                                          as.character(sheet_final_after2014_gas_9$API))
-
-sheet_final_after2014_gas_12 <- read.csv("sheet_final_after2014_gas_12.CSV")
-sheet_final_after2014_gas_12$API <- sprintf("%1.f", sheet_final_after2014_gas_12$API)
-sheet_final_after2014_gas_12$API <- ifelse(startsWith(sheet_final_after2014_gas_12$API, "5"),
-                                          paste("0", as.character(sheet_final_after2014_gas_12$API), sep = ""),
-                                          as.character(sheet_final_after2014_gas_12$API))
-
+combineSheets <- function() {
+ 
+  for (period in c("before2014","after2014")) {
+    
+    sheet_res <- NA
+    
+    for (res in c("_oil_", "_gas_")) {
+      
+      sheet_month <- data.frame()
+      
+      for (mon in seq(3, 12, by = 3)) {
+        
+        sheet_final <- read.csv(paste0("sheet_final_", period, res, mon, ".CSV"))
+        
+        sheet_final$API <- sprintf("%1.f", sheet_final$API)
+        sheet_final$API <- ifelse(startsWith(sheet_final$API, "5"),
+                                                  paste("0", as.character(sheet_final$API), sep = ""),
+                                                  as.character(sheet_final$API))
+        
+        ##rbind
+        
+        sheet_month <- rbind(sheet_month, sheet_final)
+        
+      } 
+      
+      sheet_month[sheet_month$Forecast_type == "actual", which(colnames(sheet_month) == "FORECAST_NAME")] <- NA
+      sheet_month <- distinct(sheet_month)
+      
+      ##merge
+      
+      if (is.na(sheet_res)) {
+        sheet_res <- sheet_month
+      } else {
+        sheet_res <- merge(sheet_res, sheet_month)  
+      }
+      
   
-
-sheet_final_after2014_oil_3 <- read.csv("sheet_final_after2014_oil_3.CSV")
-sheet_final_after2014_oil_3$API <- sprintf("%1.f", sheet_final_after2014_oil_3$API)
-sheet_final_after2014_oil_3$API <- ifelse(startsWith(sheet_final_after2014_oil_3$API, "5"),
-                                          paste("0", as.character(sheet_final_after2014_oil_3$API), sep = ""),
-                                          as.character(sheet_final_after2014_oil_3$API))
-
-sheet_final_after2014_oil_6 <- read.csv("sheet_final_after2014_oil_6.CSV")
-sheet_final_after2014_oil_6$API <- sprintf("%1.f", sheet_final_after2014_oil_6$API)
-sheet_final_after2014_oil_6$API <- ifelse(startsWith(sheet_final_after2014_oil_6$API, "5"),
-                                          paste("0", as.character(sheet_final_after2014_oil_6$API), sep = ""),
-                                          as.character(sheet_final_after2014_oil_6$API))
-
-sheet_final_after2014_oil_9 <- read.csv("sheet_final_after2014_oil_9.CSV")
-sheet_final_after2014_oil_9$API <- sprintf("%1.f", sheet_final_after2014_oil_9$API)
-sheet_final_after2014_oil_9$API <- ifelse(startsWith(sheet_final_after2014_oil_9$API, "5"),
-                                          paste("0", as.character(sheet_final_after2014_oil_9$API), sep = ""),
-                                          as.character(sheet_final_after2014_oil_9$API))
-
-sheet_final_after2014_oil_12 <- read.csv("sheet_final_after2014_oil_12.CSV")
-sheet_final_after2014_oil_12$API <- sprintf("%1.f", sheet_final_after2014_oil_12$API)
-sheet_final_after2014_oil_12$API <- ifelse(startsWith(sheet_final_after2014_oil_12$API, "5"),
-                                           paste("0", as.character(sheet_final_after2014_oil_12$API), sep = ""),
-                                           as.character(sheet_final_after2014_oil_12$API))
+    
+    }
   
-sheet_final_before2014_gas_3 <- read.csv("sheet_final_before2014_gas_3.CSV")
-sheet_final_before2014_gas_3$API <- sprintf("%1.f", sheet_final_before2014_gas_3$API)
-sheet_final_before2014_gas_3$API <- ifelse(startsWith(sheet_final_before2014_gas_3$API, "5"),
-                                          paste("0", as.character(sheet_final_before2014_gas_3$API), sep = ""),
-                                          as.character(sheet_final_before2014_gas_3$API))
-
-sheet_final_before2014_gas_6 <- read.csv("sheet_final_before2014_gas_6.CSV")
-sheet_final_before2014_gas_6$API <- sprintf("%1.f", sheet_final_before2014_gas_6$API)
-sheet_final_before2014_gas_6$API <- ifelse(startsWith(sheet_final_before2014_gas_6$API, "5"),
-                                          paste("0", as.character(sheet_final_before2014_gas_6$API), sep = ""),
-                                          as.character(sheet_final_before2014_gas_6$API))
-
-sheet_final_before2014_gas_9 <- read.csv("sheet_final_before2014_gas_9.CSV")
-sheet_final_before2014_gas_9$API <- sprintf("%1.f", sheet_final_before2014_gas_9$API)
-sheet_final_before2014_gas_9$API <- ifelse(startsWith(sheet_final_before2014_gas_9$API, "5"),
-                                          paste("0", as.character(sheet_final_before2014_gas_9$API), sep = ""),
-                                          as.character(sheet_final_before2014_gas_9$API))
-
-sheet_final_before2014_gas_12 <- read.csv("sheet_final_before2014_gas_12.CSV")
-sheet_final_before2014_gas_12$API <- sprintf("%1.f", sheet_final_before2014_gas_12$API)
-sheet_final_before2014_gas_12$API <- ifelse(startsWith(sheet_final_before2014_gas_12$API, "5"),
-                                           paste("0", as.character(sheet_final_before2014_gas_12$API), sep = ""),
-                                           as.character(sheet_final_before2014_gas_12$API))
-  
-sheet_final_before2014_oil_3 <- read.csv("sheet_final_before2014_oil_3.CSV")
-sheet_final_before2014_oil_3$API <- sprintf("%1.f", sheet_final_before2014_oil_3$API)
-sheet_final_before2014_oil_3$API <- ifelse(startsWith(sheet_final_before2014_oil_3$API, "5"),
-                                          paste("0", as.character(sheet_final_before2014_oil_3$API), sep = ""),
-                                          as.character(sheet_final_before2014_oil_3$API))
-
-sheet_final_before2014_oil_6 <- read.csv("sheet_final_before2014_oil_6.CSV")
-sheet_final_before2014_oil_6$API <- sprintf("%1.f", sheet_final_before2014_oil_6$API)
-sheet_final_before2014_oil_6$API <- ifelse(startsWith(sheet_final_before2014_oil_6$API, "5"),
-                                          paste("0", as.character(sheet_final_before2014_oil_6$API), sep = ""),
-                                          as.character(sheet_final_before2014_oil_6$API))
-
-sheet_final_before2014_oil_9 <- read.csv("sheet_final_before2014_oil_9.CSV")
-sheet_final_before2014_oil_9$API <- sprintf("%1.f", sheet_final_before2014_oil_9$API)
-sheet_final_before2014_oil_9$API <- ifelse(startsWith(sheet_final_before2014_oil_9$API, "5"),
-                                          paste("0", as.character(sheet_final_before2014_oil_9$API), sep = ""),
-                                          as.character(sheet_final_before2014_oil_9$API))
-
-sheet_final_before2014_oil_12 <- read.csv("sheet_final_before2014_oil_12.CSV")
-sheet_final_before2014_oil_12$API <- sprintf("%1.f", sheet_final_before2014_oil_12$API)
-sheet_final_before2014_oil_12$API <- ifelse(startsWith(sheet_final_before2014_oil_12$API, "5"),
-                                           paste("0", as.character(sheet_final_before2014_oil_12$API), sep = ""),
-                                           as.character(sheet_final_before2014_oil_12$API))
-  
-
-gas_after <- rbind(sheet_final_after2014_gas_3,
-                   sheet_final_after2014_gas_6,
-                   sheet_final_after2014_gas_9,
-                   sheet_final_after2014_gas_12)
-
-oil_after <- rbind(sheet_final_after2014_oil_3,
-                   sheet_final_after2014_oil_6,
-                   sheet_final_after2014_oil_9,
-                   sheet_final_after2014_oil_12)
-
-gas_before <- rbind(sheet_final_before2014_gas_3,
-                   sheet_final_before2014_gas_6,
-                   sheet_final_before2014_gas_9,
-                   sheet_final_before2014_gas_12)
-
-oil_before <- rbind(sheet_final_before2014_oil_3,
-                   sheet_final_before2014_oil_6,
-                   sheet_final_before2014_oil_9,
-                   sheet_final_before2014_oil_12)
-
-oil_before[oil_before$Forecast_type == "actual", 245] <- NA
-oil_before <- distinct(oil_before)
-
-gas_before[gas_before$Forecast_type == "actual", 240] <- NA
-gas_before <- distinct(gas_before)
-
-before_2014 <- merge(oil_before, gas_before)
-
-
-oil_after[oil_after$Forecast_type == "actual", 245] <- NA
-oil_after <- distinct(oil_after)
-
-gas_after[gas_after$Forecast_type == "actual", 240] <- NA
-gas_after <- distinct(gas_after)
-
-after_2014 <- merge(oil_after, gas_after)
-  
-  
+    write.csv(sheet_res, paste0(period, ".CSV"))
+  }
+}
