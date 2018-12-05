@@ -8,7 +8,7 @@ executeCombination <- function(features, monthsCount, isAfter, isOil) {
   cleanedResourceStr <- ifelse(isOil, "oil", "gas")
   
   
-  newdataset_before2014_gas <- read.csv(paste0("output/newdataset_", periodStr, resourceStr))
+  newdataset_before2014_gas <- read.csv(paste0("C:/Users/samr/Desktop/PDPSecuritization/output/newdataset_", periodStr, resourceStr))
   
   newdataset_before2014_gas$API <- sprintf("%1.f", newdataset_before2014_gas$API)
   newdataset_before2014_gas$API <- ifelse(startsWith(newdataset_before2014_gas$API, "5"),
@@ -40,7 +40,7 @@ executeCombination <- function(features, monthsCount, isAfter, isOil) {
   final_before2014_gas <- final_before2014_gas[complete.cases(final_before2014_gas),]
   
   
-  API <- read.csv(paste0("final_", periodStr, "test_API.CSV"))
+  API <- read.csv(paste0("C:/Users/samr/Desktop/PDPSecuritization/final_", periodStr, "test_API.CSV"))
   
   API$API <- sprintf("%1.f", API$API)
   API$API <- ifelse(startsWith(API$API, "5"), paste("0", as.character(API$API), sep = ""), as.character(API$API))
@@ -49,13 +49,19 @@ executeCombination <- function(features, monthsCount, isAfter, isOil) {
   final_before2014_gas_test <- inner_join(final_before2014_gas, API, by = "API")
   final_before2014_gas_train <- anti_join(final_before2014_gas, API, by = "API")
   
-  
+  mtry <- sqrt(ncol(as.data.frame(final_before2014_gas_train[, !colnames(final_before2014_gas_train) %in% c("API", "my_di")])))
+  tunegrid <- expand.grid(.mtry=c(1:15))
+  control <- trainControl(method="repeatedcv", number=10, repeats=3, search="grid")
+  # metric <- "Accuracy"
+
   set.seed(5)
   qi_model <-
     caret::train( my_qi ~ .,
                   data = as.data.frame(final_before2014_gas_train[, !colnames(final_before2014_gas_train) %in% c("API", "my_di")]),
                   method = "rf",
-                  trControl = trainControl(method="none"))
+                  # metric=metric,
+                  tuneGrid=tunegrid,
+                  trControl = control)
 
 
   set.seed(5)
@@ -63,7 +69,9 @@ executeCombination <- function(features, monthsCount, isAfter, isOil) {
     caret::train( my_di ~ .,
                   data = as.data.frame(final_before2014_gas_train[, !colnames(final_before2014_gas_train) %in% c("API", "my_qi")]),
                   method = "rf",
-                  trControl = trainControl(method="none"))
+                  # metric=metric,
+                  tuneGrid=tunegrid,
+                  trControl = control)
   
   
   final_before2014_gas_test$predicted_qi <- predict(qi_model, final_before2014_gas_test)
@@ -75,7 +83,7 @@ executeCombination <- function(features, monthsCount, isAfter, isOil) {
   
   final_before2014_gas_test <- inner_join(final_before2014_gas_test, newdataset_before2014_gas[, c("API", "my_b")], by = "API")
   
-  production_data <- read.csv(paste0("output/neighborsPool_", periodStr, resourceStr))
+  production_data <- read.csv(paste0("C:/Users/samr/Desktop/PDPSecuritization/output/neighborsPool_", periodStr, resourceStr))
   
   production_data$API <- sprintf("%1.f", production_data$API)
   production_data$API <- ifelse(startsWith(production_data$API, "5"), paste("0", as.character(production_data$API), sep = ""), as.character(production_data$API))
@@ -116,15 +124,27 @@ executeCombination <- function(features, monthsCount, isAfter, isOil) {
     sheet_all[,c(which(colnames(sheet_all) == paste0(cleanedResourceStr, "_month_1")):which(colnames(sheet_all) == paste0(cleanedResourceStr, "_month_60")))] <- sheet_all[,c(which(colnames(sheet_all) == paste0(cleanedResourceStr, "_month_1")):which(colnames(sheet_all) == paste0(cleanedResourceStr, "_month_60")))] * 30
     
     print("Done 4")
-    sheet_final <- fillGasError(sheet_all) 
+    sheet_final <- fillGasError(sheet_all)
     
   }
+  
+  # 
+  # print("Done 4")
+  # sheet_final <- fillError(sheet_all, cleanedResourceStr)
+  
+  
   
   sheet_final$FORECAST_NAME <- monthsCount
   
   sheet_final[sheet_final == Inf] <- NA
   
   write.csv(sheet_final, paste0("sheet_final_", periodStr, cleanedResourceStr, "_", monthsCount, ".CSV"), row.names = FALSE)
+  
+  # assign(paste0("sheet_final_", periodStr, cleanedResourceStr, "_", monthsCount), sheet_final)
+  # 
+  # return(paste0("sheet_final_", periodStr, cleanedResourceStr, "_", monthsCount))
+  
+  
   
 }
 

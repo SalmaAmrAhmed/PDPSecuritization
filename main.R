@@ -21,9 +21,7 @@ for (mon in seq(3, 12, by = 3)) {
       
       print(paste(mon, period, res))
       
-      executeCombination(features, monthsCount = mon, isAfter = period, isOil = res)   
-      
-      
+      executeCombination(features, monthsCount = mon, isAfter = period, isOil = res)
       
     }
     

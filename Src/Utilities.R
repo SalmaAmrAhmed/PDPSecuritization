@@ -1896,6 +1896,7 @@ fillOilError <- function(sheet_all) {
     
     #from col 2 till col 73
     actual_row <- sheetList[[API]] %>% dplyr::filter(Forecast_type == "actual")
+    actual_row[actual_row == 0] <- 1
     arps_row <- sheetList[[API]] %>% dplyr::filter(Forecast_type == "arps")
     ml_row <- sheetList[[API]] %>% dplyr::filter(Forecast_type == "ml")
     
@@ -1994,6 +1995,9 @@ fillOilError <- function(sheet_all) {
   
 }
 
+
+
+
 fillGasError <- function(sheet_all) {
   
   #month
@@ -2051,6 +2055,7 @@ fillGasError <- function(sheet_all) {
     
     #from col 2 till col 73
     actual_row <- sheetList[[API]] %>% dplyr::filter(Forecast_type == "actual")
+    actual_row[actual_row == 0] <- 1
     arps_row <- sheetList[[API]] %>% dplyr::filter(Forecast_type == "arps")
     ml_row <- sheetList[[API]] %>% dplyr::filter(Forecast_type == "ml")
     
@@ -2073,7 +2078,7 @@ fillGasError <- function(sheet_all) {
       (ml_row[1,c(which(colnames(frame) == "gas_month_1"):which(colnames(frame) == "gas_month_60"))] - actual_row[1,c(which(colnames(frame) == "gas_month_1"):which(colnames(frame) == "gas_month_60"))]) / actual_row[1,c(which(colnames(frame) == "gas_month_1"):which(colnames(frame) == "gas_month_60"))]
     
     
-    # from col 235 till 239 -> year cum error
+
     #year 1
     
     if (sum(is.na(arps_row[1,c(which(colnames(frame) == "gas_month_1"):which(colnames(frame) == "gas_month_12"))])) < 3) {
